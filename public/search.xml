@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<search>
+  <entry>
+    <title>Hexo博客搭建</title>
+    <url>/posts/b8f4bd70/</url>
+    <content><![CDATA[<h2 id="环境准备"><a href="#环境准备" class="headerlink" title="环境准备"></a>环境准备</h2><ul>
+<li><a href="https://nodejs.org/en/download/">node.js</a></li>
+</ul>
+<h2 id="安装hexo"><a href="#安装hexo" class="headerlink" title="安装hexo"></a>安装hexo</h2><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">npm install hexo-cli -g</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p><a href="https://hexo.io/zh-cn/docs/setup">建站文档</a></p>
+</blockquote>
+<h2 id="优化"><a href="#优化" class="headerlink" title="优化"></a>优化</h2><h3 id="添加标签和分类"><a href="#添加标签和分类" class="headerlink" title="添加标签和分类"></a>添加标签和分类</h3><span id="more"></span>
+
+<h4 id="创建categories页面"><a href="#创建categories页面" class="headerlink" title="创建categories页面"></a>创建categories页面</h4><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">hexo new page categories</span><br></pre></td></tr></table></figure>
+
+<h4 id="编辑source-categories-index-md内容"><a href="#编辑source-categories-index-md内容" class="headerlink" title="编辑source/categories/index.md内容"></a>编辑<code>source/categories/index.md</code>内容</h4><figure class="highlight markdown"><table><tr><td class="code"><pre><span class="line">title: categories</span><br><span class="line">date: 2022-11-04 17:21:48</span><br><span class="line">type: &quot;categories&quot;</span><br></pre></td></tr></table></figure>
+
+<h4 id="创建tags页面"><a href="#创建tags页面" class="headerlink" title="创建tags页面"></a>创建tags页面</h4><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">hexo new page categories</span><br></pre></td></tr></table></figure>
+
+<h4 id="编辑source-tags-index-md内容"><a href="#编辑source-tags-index-md内容" class="headerlink" title="编辑source/tags/index.md内容"></a>编辑<code>source/tags/index.md</code>内容</h4><figure class="highlight markdown"><table><tr><td class="code"><pre><span class="line">title: categories</span><br><span class="line">date: 2022-11-04 17:21:48</span><br><span class="line">type: &quot;tags&quot;</span><br></pre></td></tr></table></figure>
+
+<h3 id="hexo-new新建文件之后立即打开"><a href="#hexo-new新建文件之后立即打开" class="headerlink" title="hexo new新建文件之后立即打开"></a><code>hexo new</code>新建文件之后立即打开</h3><blockquote>
+<p>在 Hexo 目录下的 <code>scripts</code> 目录（若没有，则新建一个blog/scripts）中创建一个 JavaScript （openNewFile）脚本，监听 <code>hexo new</code> 这个动作。并在检测到 <code>hexo new</code> 之后，执行编辑器打开的命令</p>
+</blockquote>
+<h4 id="Typora打开新建的Markdown文档"><a href="#Typora打开新建的Markdown文档" class="headerlink" title="Typora打开新建的Markdown文档"></a>Typora打开新建的Markdown文档</h4><p><strong>openNewFile.js中的代码</strong></p>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="keyword">var</span> spawn = <span class="built_in">require</span>(<span class="string">&#x27;child_process&#x27;</span>).<span class="property">spawn</span>;</span><br><span class="line">hexo.<span class="title function_">on</span>(<span class="string">&#x27;new&#x27;</span>, <span class="keyword">function</span>(<span class="params">data</span>)&#123;</span><br><span class="line">    <span class="title function_">spawn</span>(<span class="string">&#x27;C:/Program Files/Typora/Typora.exe &#x27;</span>, [data.<span class="property">path</span>]);</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+<h3 id="插件安装"><a href="#插件安装" class="headerlink" title="插件安装"></a>插件安装</h3><h4 id="hexo-abbrlink"><a href="#hexo-abbrlink" class="headerlink" title="hexo-abbrlink"></a>hexo-abbrlink</h4><blockquote>
+<p>可以优化博客路径</p>
+</blockquote>
+<ul>
+<li><p>安装</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">npm install hexo-abbrlink --save</span><br></pre></td></tr></table></figure></li>
+<li><p>更新<code>_config.yml</code></p>
+<figure class="highlight yml"><table><tr><td class="code"><pre><span class="line"><span class="attr">permalink:</span> <span class="string">posts/:abbrlink/</span> </span><br><span class="line"><span class="comment"># or</span></span><br><span class="line"><span class="attr">permalink:</span> <span class="string">posts/:abbrlink.html</span></span><br></pre></td></tr></table></figure></li>
+<li><p>添加abbrlink配置</p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="comment"># abbrlink config(添加到_config.yml末尾)</span></span><br><span class="line"><span class="attr">abbrlink:</span></span><br><span class="line">  <span class="attr">alg:</span> <span class="string">crc32</span>      <span class="comment">#support crc16(default) and crc32</span></span><br><span class="line">  <span class="attr">rep:</span> <span class="string">hex</span>        <span class="comment">#support dec(default) and hex</span></span><br><span class="line">  <span class="attr">drafts:</span> <span class="literal">false</span>   <span class="comment">#(true)Process draft,(false)Do not process draft. false(default) </span></span><br><span class="line">  <span class="comment"># Generate categories from directory-tree</span></span><br><span class="line">  <span class="comment"># depth: the max_depth of directory-tree you want to generate, should &gt; 0</span></span><br><span class="line">  <span class="attr">auto_category:</span></span><br><span class="line">     <span class="attr">enable:</span> <span class="literal">true</span>  <span class="comment">#true(default)</span></span><br><span class="line">     <span class="attr">depth:</span>        <span class="comment">#3(default)</span></span><br><span class="line">     <span class="attr">over_write:</span> <span class="literal">false</span> </span><br><span class="line">  <span class="attr">auto_title:</span> <span class="literal">false</span> <span class="comment">#enable auto title, it can auto fill the title by path</span></span><br><span class="line">  <span class="attr">auto_date:</span> <span class="literal">false</span> <span class="comment">#enable auto date, it can auto fill the date by time today</span></span><br><span class="line">  <span class="attr">force:</span> <span class="literal">false</span> <span class="comment">#enable force mode,in this mode, the plugin will ignore the cache, and calc the abbrlink for every post even it already had abbrlink. This only updates abbrlink rather than other front variables.</span></span><br></pre></td></tr></table></figure></li>
+</ul>
+<h4 id="hexo-asset-image"><a href="#hexo-asset-image" class="headerlink" title="hexo-asset-image"></a>hexo-asset-image</h4><p>自动为文章中的图片提供绝对路径，需要设置 <code>_config.yml</code></p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">post_asset_folder:</span> <span class="literal">true</span></span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>参考文档</p>
+<ul>
+<li><a href="https://www.cnblogs.com/stulzq/p/16445025.html">https://www.cnblogs.com/stulzq/p/16445025.html</a></li>
+</ul>
+</blockquote>
+]]></content>
+      <tags>
+        <tag>Hexo</tag>
+      </tags>
+  </entry>
+</search>
