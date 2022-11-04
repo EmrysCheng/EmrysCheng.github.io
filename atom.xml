@@ -6,7 +6,7 @@
   <link href="https://nicollcheng.github.io/atom.xml" rel="self"/>
   
   <link href="https://nicollcheng.github.io/"/>
-  <updated>2022-11-03T09:54:41.472Z</updated>
+  <updated>2022-11-04T09:28:55.193Z</updated>
   <id>https://nicollcheng.github.io/</id>
   
   <author>
@@ -17,20 +17,27 @@
   <generator uri="https://hexo.io/">Hexo</generator>
   
   <entry>
-    <title>Hello World</title>
-    <link href="https://nicollcheng.github.io/posts/16107/"/>
-    <id>https://nicollcheng.github.io/posts/16107/</id>
-    <published>2022-11-02T07:19:09.577Z</published>
-    <updated>2022-11-03T09:54:41.472Z</updated>
+    <title>Hexo博客搭建</title>
+    <link href="https://nicollcheng.github.io/posts/b8f4bd70/"/>
+    <id>https://nicollcheng.github.io/posts/b8f4bd70/</id>
+    <published>2022-11-04T08:09:01.000Z</published>
+    <updated>2022-11-04T09:28:55.193Z</updated>
     
     
-      
-      
-    <summary type="html">&lt;p&gt;Welcome to &lt;a href=&quot;https://hexo.io/&quot;&gt;Hexo&lt;/a&gt;! This is your very first post. Check &lt;a href=&quot;https://hexo.io/docs/&quot;&gt;documentation&lt;/a&gt; for</summary>
-      
+    <summary type="html">&lt;h2 id=&quot;环境准备&quot;&gt;&lt;a href=&quot;#环境准备&quot; class=&quot;headerlink&quot; title=&quot;环境准备&quot;&gt;&lt;/a&gt;环境准备&lt;/h2&gt;&lt;ul&gt;
+&lt;li&gt;&lt;a href=&quot;https://nodejs.org/en/download/&quot;&gt;node.js&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&quot;安装hexo&quot;&gt;&lt;a href=&quot;#安装hexo&quot; class=&quot;headerlink&quot; title=&quot;安装hexo&quot;&gt;&lt;/a&gt;安装hexo&lt;/h2&gt;&lt;figure class=&quot;highlight shell&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;npm install hexo-cli -g&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;&lt;a href=&quot;https://hexo.io/zh-cn/docs/setup&quot;&gt;建站文档&lt;/a&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;h2 id=&quot;优化&quot;&gt;&lt;a href=&quot;#优化&quot; class=&quot;headerlink&quot; title=&quot;优化&quot;&gt;&lt;/a&gt;优化&lt;/h2&gt;&lt;h3 id=&quot;添加标签和分类&quot;&gt;&lt;a href=&quot;#添加标签和分类&quot; class=&quot;headerlink&quot; title=&quot;添加标签和分类&quot;&gt;&lt;/a&gt;添加标签和分类&lt;/h3&gt;</summary>
     
     
     
+    
+    <category term="Hexo" scheme="https://nicollcheng.github.io/tags/Hexo/"/>
     
   </entry>
   
