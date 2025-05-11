@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<search>
+  <entry>
+    <title>Arthas 详解</title>
+    <url>/2025/05/11/Arthas%E8%AF%A6%E8%A7%A3/</url>
+    <content><![CDATA[<p><strong>Arthas</strong> 是 Alibaba 在 2018 年 9 月开源的 <strong>Java 诊断 </strong> 工具。支持 JDK6+， 采用命令行交互模式，可以方便的定位和诊断线上程序运行问题。<strong>Arthas</strong> 官方文档十分详细，详见：<a href="https://arthas.aliyun.com/doc/">https://arthas.aliyun.com/doc/</a></p>
+<h2 id="Arthas 使用场景"><a href="#Arthas 使用场景" class="headerlink" title="Arthas 使用场景"></a>Arthas 使用场景</h2><ol>
+<li>提供全局视角查看系统的运行状况</li>
+<li>监控 CPU 运行状态</li>
+<li>监控线程运行状态</li>
+<li>监测程序运行耗时</li>
+<li>产科指定类从哪个 jar 包加载的</li>
+<li>反编译线上环境代码，验证 commit 是否生效</li>
+<li>遇到问题在线上 debug 无需通过加日志再重新发布</li>
+<li>监控 JVM 的实时运行状态</li>
+</ol>
+<h2 id="Arthas 使用"><a href="#Arthas 使用" class="headerlink" title="Arthas 使用"></a>Arthas 使用 </h2><h3 id="下载"><a href="# 下载" class="headerlink" title="下载"></a> 下载 </h3><h4 id="从 -Maven- 仓库下载"><a href="# 从 -Maven- 仓库下载" class="headerlink" title="从 Maven 仓库下载"></a> 从 Maven 仓库下载 </h4><p> 最新版本，点击下载：</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">wget https://arthas.aliyun.com/download/latest_version?mirror=aliyun -O arthas-packaging-bin.zip</span><br></pre></td></tr></table></figure>
+
+<h4 id="从 -Github-Releases- 页下载"><a href="# 从 -Github-Releases- 页下载" class="headerlink" title="从 Github Releases 页下载"></a>从 Github Releases 页下载</h4><p><a href="https://github.com/alibaba/arthas/releases">https://github.com/alibaba/arthas/releases</a></p>
+<h3 id="启动"><a href="# 启动" class="headerlink" title="启动"></a>启动 </h3><p> 首先解压下载的压缩包</p>
+<h4 id="使用 as-sh 启动"><a href="# 使用 as-sh 启动" class="headerlink" title="使用 as.sh 启动"></a>使用 as.sh 启动 </h4><p> 在文件夹里有 <code>as.sh</code>，直接用<code>./as.sh</code> 的方式启动：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">./as.sh</span><br></pre></td></tr></table></figure>
+
+<p>打印帮助信息：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">./as.sh -h</span><br></pre></td></tr></table></figure>
+
+<h4 id="用 -arthas-boot- 启动"><a href="# 用 -arthas-boot- 启动" class="headerlink" title="用 arthas-boot 启动"></a>用 arthas-boot 启动 </h4><p> 在文件夹里有 <code>arthas-boot.jar</code>，直接用<code>java -jar</code> 的方式启动：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">java -jar arthas-boot.jar</span><br></pre></td></tr></table></figure>
+
+<p>打印帮助信息：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">java -jar arthas-boot.jar -h</span><br></pre></td></tr></table></figure>
+
+<h3 id="下载离线文档"><a href="# 下载离线文档" class="headerlink" title="下载离线文档"></a>下载离线文档 </h3><p><a href="https://arthas.aliyun.com/download/doc/latest_version?mirror=aliyun"> 下载文档</a></p>
+<h3 id="使用示例"><a href="# 使用示例" class="headerlink" title="使用示例"></a>使用示例</h3><p>Arthas 测试程序，代码见下方</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> java.util.HashSet;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">ArthasDemo</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="type">HashSet</span> <span class="variable">hashSet</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">HashSet</span>();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">        <span class="comment">// 模拟 CPU 过高</span></span><br><span class="line">        cpuHigh();</span><br><span class="line">        <span class="comment">// 模拟线程死锁</span></span><br><span class="line">        deadThread();</span><br><span class="line">        <span class="comment">// 不断的向 hashSet 集合增加数据</span></span><br><span class="line">        addHashSetThread();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 不断的向 hashSet 集合添加数据</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">addHashSetThread</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="comment">// 初始化常量</span></span><br><span class="line">        <span class="keyword">new</span> <span class="title class_">Thread</span>(() -&gt; &#123;</span><br><span class="line">            <span class="type">int</span> <span class="variable">count</span> <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line">            <span class="keyword">while</span> (<span class="literal">true</span>) &#123;</span><br><span class="line">                <span class="keyword">try</span> &#123;</span><br><span class="line">                    hashSet.add(<span class="string">&quot;count&quot;</span> + count);</span><br><span class="line">                    Thread.sleep(<span class="number">1000</span>);</span><br><span class="line">                    count++;</span><br><span class="line">                &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">                    e.printStackTrace();</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;).start();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">cpuHigh</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">new</span> <span class="title class_">Thread</span>(() -&gt; &#123;</span><br><span class="line">            <span class="keyword">while</span> (<span class="literal">true</span>) &#123;</span><br><span class="line"></span><br><span class="line">            &#125;</span><br><span class="line">        &#125;).start();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 死锁</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">deadThread</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="comment">/** 创建资源 */</span></span><br><span class="line">        <span class="type">Object</span> <span class="variable">resourceA</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Object</span>();</span><br><span class="line">        <span class="type">Object</span> <span class="variable">resourceB</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Object</span>();</span><br><span class="line">        <span class="comment">// 创建线程</span></span><br><span class="line">        <span class="type">Thread</span> <span class="variable">threadA</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Thread</span>(() -&gt; &#123;</span><br><span class="line">            <span class="keyword">synchronized</span> (resourceA) &#123;</span><br><span class="line">                System.out.println(Thread.currentThread() + <span class="string">&quot; get ResourceA&quot;</span>);</span><br><span class="line">                <span class="keyword">try</span> &#123;</span><br><span class="line">                    Thread.sleep(<span class="number">1000</span>);</span><br><span class="line">                &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">                    e.printStackTrace();</span><br><span class="line">                &#125;</span><br><span class="line">                System.out.println(Thread.currentThread() + <span class="string">&quot;waiting get resourceB&quot;</span>);</span><br><span class="line">                <span class="keyword">synchronized</span> (resourceB) &#123;</span><br><span class="line">                    System.out.println(Thread.currentThread() + <span class="string">&quot; get resourceB&quot;</span>);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br><span class="line"></span><br><span class="line">        <span class="type">Thread</span> <span class="variable">threadB</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Thread</span>(() -&gt; &#123;</span><br><span class="line">            <span class="keyword">synchronized</span> (resourceB) &#123;</span><br><span class="line">                System.out.println(Thread.currentThread() + <span class="string">&quot; get ResourceB&quot;</span>);</span><br><span class="line">                <span class="keyword">try</span> &#123;</span><br><span class="line">                    Thread.sleep(<span class="number">1000</span>);</span><br><span class="line">                &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">                    e.printStackTrace();</span><br><span class="line">                &#125;</span><br><span class="line">                System.out.println(Thread.currentThread() + <span class="string">&quot;waiting get resourceA&quot;</span>);</span><br><span class="line">                <span class="keyword">synchronized</span> (resourceA) &#123;</span><br><span class="line">                    System.out.println(Thread.currentThread() + <span class="string">&quot; get resourceA&quot;</span>);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br><span class="line">        threadA.start();</span><br><span class="line">        threadB.start();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>选择进程序号 1，进入进程信息操作</p>
+<p><img src="/2025/05/11/Arthas%E8%AF%A6%E8%A7%A3/image-20250511161601592.png" alt="image-20250511161601592"></p>
+<p><img src="/2025/05/11/Arthas%E8%AF%A6%E8%A7%A3/image-20250511161635469.png" alt="image-20250511161635469"></p>
+<p>输入 <strong>dashboard</strong> 可以查看整个进程的运行情况，线程、内存、GC、运行环境信息：</p>
+<p><img src="/2025/05/11/Arthas%E8%AF%A6%E8%A7%A3/image-20250511161706675.png" alt="image-20250511161706675"></p>
+<p>输入 <strong>thread</strong> 可以查看线程详细情况</p>
+<p><img src="/2025/05/11/Arthas%E8%AF%A6%E8%A7%A3/image-20250511161724180.png" alt="image-20250511161724180"></p>
+<p>输入 <strong>thread 加上线程 ID</strong> 可以查看线程堆栈</p>
+<p><img src="/2025/05/11/Arthas%E8%AF%A6%E8%A7%A3/image-20250511161809969.png" alt="image-20250511161809969"></p>
+<p>输入 <strong>thread -b</strong> 可以查看线程死锁</p>
+<p><img src="/2025/05/11/Arthas%E8%AF%A6%E8%A7%A3/image-20250511161849139.png" alt="image-20250511161849139"></p>
+<p>输入 jad 加类的全名 可以反编译，这样可以方便我们查看线上代码是否是正确的版本</p>
+<p><img src="/2025/05/11/Arthas%E8%AF%A6%E8%A7%A3/image-20250511162108472.png" alt="image-20250511162108472"></p>
+<p>使用 ognl 命令可以获取静态变量或修改静态变量</p>
+<p><img src="/2025/05/11/Arthas%E8%AF%A6%E8%A7%A3/image-20250511162234019.png" alt="image-20250511162234019"></p>
+<p><img src="/2025/05/11/Arthas%E8%AF%A6%E8%A7%A3/image-20250511162332940.png" alt="image-20250511162332940"></p>
+<p>更多命令使用可以用 help 命令查看，或查看文档<a href="https://arthas.aliyun.com/doc/commands.html">https://arthas.aliyun.com/doc/commands.html</a></p>
+]]></content>
+      <categories>
+        <category>Arthas</category>
+        <category>DevOps</category>
+      </categories>
+      <tags>
+        <tag>Arthas</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Github 克隆私人仓库报错</title>
+    <url>/2024/12/02/Github%E5%85%8B%E9%9A%86%E7%A7%81%E4%BA%BA%E4%BB%93%E5%BA%93%E6%8A%A5%E9%94%99/</url>
+    <content><![CDATA[<p> 当克隆某一私有项目时报错 </p>
+<p><img src="/2024/12/02/Github%E5%85%8B%E9%9A%86%E7%A7%81%E4%BA%BA%E4%BB%93%E5%BA%93%E6%8A%A5%E9%94%99/image-20241202113128459.png" alt="image-20241202113128459"></p>
+<p> 就算这个私有项目是我所有。</p>
+<span id="more"></span>
+<p> 通过查阅资料，首先重新 generate token。点击头像，选择 settings&gt;Developer settings&gt;Personal access tokens, 点击 generate new tokens，生成新的 tokens 后复制。</p>
+<p><img src="/2024/12/02/Github%E5%85%8B%E9%9A%86%E7%A7%81%E4%BA%BA%E4%BB%93%E5%BA%93%E6%8A%A5%E9%94%99/59a781ff15575689eb37ae3a921b2963.jpeg" alt="img"></p>
+<p><img src="/2024/12/02/Github%E5%85%8B%E9%9A%86%E7%A7%81%E4%BA%BA%E4%BB%93%E5%BA%93%E6%8A%A5%E9%94%99/e1afa7b78a0e0fe7624c8fea43dd8f2b.jpeg" alt="img"></p>
+<p> 按照以下的格式重新 clone 仓库即可：</p>
+<p> 其中 useName 用自己的用户名替换，token 用刚刚复制的 token 值替换。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git <span class="built_in">clone</span> https://userName:token@github.com/EmmaammE/CohortVA.git</span><br></pre></td></tr></table></figure>
+]]></content>
+      <categories>
+        <category>Github</category>
+      </categories>
+      <tags>
+        <tag>Github</tag>
+        <tag>Git</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>分类</title>
+    <url>/categories/index.html</url>
+    <content><![CDATA[]]></content>
+  </entry>
+  <entry>
+    <title>标签</title>
+    <url>/tags/index.html</url>
+    <content><![CDATA[]]></content>
+  </entry>
+</search>
