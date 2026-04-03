@@ -1,0 +1,834 @@
+<?xml version="1.0" encoding="utf-8"?>
+<search>
+  <entry>
+    <title>Github 克隆私人仓库报错</title>
+    <url>/2024/12/02/Github%E5%85%8B%E9%9A%86%E7%A7%81%E4%BA%BA%E4%BB%93%E5%BA%93%E6%8A%A5%E9%94%99/</url>
+    <content><![CDATA[<p> 当克隆某一私有项目时报错 </p>
+<p><img src="/2024/12/02/Github%E5%85%8B%E9%9A%86%E7%A7%81%E4%BA%BA%E4%BB%93%E5%BA%93%E6%8A%A5%E9%94%99/image-20241202113128459.png" alt="image-20241202113128459"></p>
+<p> 就算这个私有项目是我所有。</p>
+<span id="more"></span>
+<p> 通过查阅资料，首先重新 generate token。点击头像，选择 settings&gt;Developer settings&gt;Personal access tokens, 点击 generate new tokens，生成新的 tokens 后复制。</p>
+<p><img src="/2024/12/02/Github%E5%85%8B%E9%9A%86%E7%A7%81%E4%BA%BA%E4%BB%93%E5%BA%93%E6%8A%A5%E9%94%99/59a781ff15575689eb37ae3a921b2963.jpeg" alt="img"></p>
+<p><img src="/2024/12/02/Github%E5%85%8B%E9%9A%86%E7%A7%81%E4%BA%BA%E4%BB%93%E5%BA%93%E6%8A%A5%E9%94%99/e1afa7b78a0e0fe7624c8fea43dd8f2b.jpeg" alt="img"></p>
+<p> 按照以下的格式重新 clone 仓库即可：</p>
+<p> 其中 useName 用自己的用户名替换，token 用刚刚复制的 token 值替换。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git <span class="built_in">clone</span> https://userName:token@github.com/EmmaammE/CohortVA.git</span><br></pre></td></tr></table></figure>
+]]></content>
+      <categories>
+        <category>Github</category>
+      </categories>
+      <tags>
+        <tag>Github</tag>
+        <tag>Git</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Arthas 详解</title>
+    <url>/2025/05/11/Arthas%E8%AF%A6%E8%A7%A3/</url>
+    <content><![CDATA[<p><strong>Arthas</strong> 是 Alibaba 在 2018 年 9 月开源的 <strong>Java 诊断 </strong> 工具。支持 JDK6+， 采用命令行交互模式，可以方便的定位和诊断线上程序运行问题。<strong>Arthas</strong> 官方文档十分详细，详见：<a href="https://arthas.aliyun.com/doc/">https://arthas.aliyun.com/doc/</a></p>
+<h2 id="Arthas 使用场景"><a href="#Arthas 使用场景" class="headerlink" title="Arthas 使用场景"></a>Arthas 使用场景</h2><ol>
+<li>提供全局视角查看系统的运行状况</li>
+<li>监控 CPU 运行状态</li>
+<li>监控线程运行状态</li>
+<li>监测程序运行耗时</li>
+<li>产科指定类从哪个 jar 包加载的</li>
+<li>反编译线上环境代码，验证 commit 是否生效</li>
+<li>遇到问题在线上 debug 无需通过加日志再重新发布</li>
+<li>监控 JVM 的实时运行状态</li>
+</ol>
+<h2 id="Arthas 使用"><a href="#Arthas 使用" class="headerlink" title="Arthas 使用"></a>Arthas 使用 </h2><h3 id="下载"><a href="# 下载" class="headerlink" title="下载"></a> 下载 </h3><h4 id="从 -Maven- 仓库下载"><a href="# 从 -Maven- 仓库下载" class="headerlink" title="从 Maven 仓库下载"></a> 从 Maven 仓库下载 </h4><p> 最新版本，点击下载：</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">wget https://arthas.aliyun.com/download/latest_version?mirror=aliyun -O arthas-packaging-bin.zip</span><br></pre></td></tr></table></figure>
+
+<h4 id="从 -Github-Releases- 页下载"><a href="# 从 -Github-Releases- 页下载" class="headerlink" title="从 Github Releases 页下载"></a>从 Github Releases 页下载</h4><p><a href="https://github.com/alibaba/arthas/releases">https://github.com/alibaba/arthas/releases</a></p>
+<h3 id="启动"><a href="# 启动" class="headerlink" title="启动"></a>启动 </h3><p> 首先解压下载的压缩包</p>
+<h4 id="使用 as-sh 启动"><a href="# 使用 as-sh 启动" class="headerlink" title="使用 as.sh 启动"></a>使用 as.sh 启动 </h4><p> 在文件夹里有 <code>as.sh</code>，直接用<code>./as.sh</code> 的方式启动：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">./as.sh</span><br></pre></td></tr></table></figure>
+
+<p>打印帮助信息：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">./as.sh -h</span><br></pre></td></tr></table></figure>
+
+<h4 id="用 -arthas-boot- 启动"><a href="# 用 -arthas-boot- 启动" class="headerlink" title="用 arthas-boot 启动"></a>用 arthas-boot 启动 </h4><p> 在文件夹里有 <code>arthas-boot.jar</code>，直接用<code>java -jar</code> 的方式启动：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">java -jar arthas-boot.jar</span><br></pre></td></tr></table></figure>
+
+<p>打印帮助信息：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">java -jar arthas-boot.jar -h</span><br></pre></td></tr></table></figure>
+
+<h3 id="下载离线文档"><a href="# 下载离线文档" class="headerlink" title="下载离线文档"></a>下载离线文档 </h3><p><a href="https://arthas.aliyun.com/download/doc/latest_version?mirror=aliyun"> 下载文档</a></p>
+<h3 id="使用示例"><a href="# 使用示例" class="headerlink" title="使用示例"></a>使用示例</h3><p>Arthas 测试程序，代码见下方</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> java.util.HashSet;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">ArthasDemo</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="type">HashSet</span> <span class="variable">hashSet</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">HashSet</span>();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">        <span class="comment">// 模拟 CPU 过高</span></span><br><span class="line">        cpuHigh();</span><br><span class="line">        <span class="comment">// 模拟线程死锁</span></span><br><span class="line">        deadThread();</span><br><span class="line">        <span class="comment">// 不断的向 hashSet 集合增加数据</span></span><br><span class="line">        addHashSetThread();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 不断的向 hashSet 集合添加数据</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">addHashSetThread</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="comment">// 初始化常量</span></span><br><span class="line">        <span class="keyword">new</span> <span class="title class_">Thread</span>(() -&gt; &#123;</span><br><span class="line">            <span class="type">int</span> <span class="variable">count</span> <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line">            <span class="keyword">while</span> (<span class="literal">true</span>) &#123;</span><br><span class="line">                <span class="keyword">try</span> &#123;</span><br><span class="line">                    hashSet.add(<span class="string">&quot;count&quot;</span> + count);</span><br><span class="line">                    Thread.sleep(<span class="number">1000</span>);</span><br><span class="line">                    count++;</span><br><span class="line">                &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">                    e.printStackTrace();</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;).start();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">cpuHigh</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">new</span> <span class="title class_">Thread</span>(() -&gt; &#123;</span><br><span class="line">            <span class="keyword">while</span> (<span class="literal">true</span>) &#123;</span><br><span class="line"></span><br><span class="line">            &#125;</span><br><span class="line">        &#125;).start();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 死锁</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">deadThread</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="comment">/** 创建资源 */</span></span><br><span class="line">        <span class="type">Object</span> <span class="variable">resourceA</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Object</span>();</span><br><span class="line">        <span class="type">Object</span> <span class="variable">resourceB</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Object</span>();</span><br><span class="line">        <span class="comment">// 创建线程</span></span><br><span class="line">        <span class="type">Thread</span> <span class="variable">threadA</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Thread</span>(() -&gt; &#123;</span><br><span class="line">            <span class="keyword">synchronized</span> (resourceA) &#123;</span><br><span class="line">                System.out.println(Thread.currentThread() + <span class="string">&quot; get ResourceA&quot;</span>);</span><br><span class="line">                <span class="keyword">try</span> &#123;</span><br><span class="line">                    Thread.sleep(<span class="number">1000</span>);</span><br><span class="line">                &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">                    e.printStackTrace();</span><br><span class="line">                &#125;</span><br><span class="line">                System.out.println(Thread.currentThread() + <span class="string">&quot;waiting get resourceB&quot;</span>);</span><br><span class="line">                <span class="keyword">synchronized</span> (resourceB) &#123;</span><br><span class="line">                    System.out.println(Thread.currentThread() + <span class="string">&quot; get resourceB&quot;</span>);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br><span class="line"></span><br><span class="line">        <span class="type">Thread</span> <span class="variable">threadB</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Thread</span>(() -&gt; &#123;</span><br><span class="line">            <span class="keyword">synchronized</span> (resourceB) &#123;</span><br><span class="line">                System.out.println(Thread.currentThread() + <span class="string">&quot; get ResourceB&quot;</span>);</span><br><span class="line">                <span class="keyword">try</span> &#123;</span><br><span class="line">                    Thread.sleep(<span class="number">1000</span>);</span><br><span class="line">                &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">                    e.printStackTrace();</span><br><span class="line">                &#125;</span><br><span class="line">                System.out.println(Thread.currentThread() + <span class="string">&quot;waiting get resourceA&quot;</span>);</span><br><span class="line">                <span class="keyword">synchronized</span> (resourceA) &#123;</span><br><span class="line">                    System.out.println(Thread.currentThread() + <span class="string">&quot; get resourceA&quot;</span>);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br><span class="line">        threadA.start();</span><br><span class="line">        threadB.start();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>选择进程序号 1，进入进程信息操作</p>
+<p><img src="/2025/05/11/Arthas%E8%AF%A6%E8%A7%A3/image-20250511161601592.png" alt="image-20250511161601592"></p>
+<p><img src="/2025/05/11/Arthas%E8%AF%A6%E8%A7%A3/image-20250511161635469.png" alt="image-20250511161635469"></p>
+<p>输入 <strong>dashboard</strong> 可以查看整个进程的运行情况，线程、内存、GC、运行环境信息：</p>
+<p><img src="/2025/05/11/Arthas%E8%AF%A6%E8%A7%A3/image-20250511161706675.png" alt="image-20250511161706675"></p>
+<p>输入 <strong>thread</strong> 可以查看线程详细情况</p>
+<p><img src="/2025/05/11/Arthas%E8%AF%A6%E8%A7%A3/image-20250511161724180.png" alt="image-20250511161724180"></p>
+<p>输入 <strong>thread 加上线程 ID</strong> 可以查看线程堆栈</p>
+<p><img src="/2025/05/11/Arthas%E8%AF%A6%E8%A7%A3/image-20250511161809969.png" alt="image-20250511161809969"></p>
+<p>输入 <strong>thread -b</strong> 可以查看线程死锁</p>
+<p><img src="/2025/05/11/Arthas%E8%AF%A6%E8%A7%A3/image-20250511161849139.png" alt="image-20250511161849139"></p>
+<p>输入 jad 加类的全名 可以反编译，这样可以方便我们查看线上代码是否是正确的版本</p>
+<p><img src="/2025/05/11/Arthas%E8%AF%A6%E8%A7%A3/image-20250511162108472.png" alt="image-20250511162108472"></p>
+<p>使用 ognl 命令可以获取静态变量或修改静态变量</p>
+<p><img src="/2025/05/11/Arthas%E8%AF%A6%E8%A7%A3/image-20250511162234019.png" alt="image-20250511162234019"></p>
+<p><img src="/2025/05/11/Arthas%E8%AF%A6%E8%A7%A3/image-20250511162332940.png" alt="image-20250511162332940"></p>
+<p>更多命令使用可以用 help 命令查看，或查看文档<a href="https://arthas.aliyun.com/doc/commands.html">https://arthas.aliyun.com/doc/commands.html</a></p>
+]]></content>
+      <categories>
+        <category>Arthas</category>
+        <category>DevOps</category>
+      </categories>
+      <tags>
+        <tag>Arthas</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Superpowers 与 OpenSpec 协同编码实践</title>
+    <url>/2026/04/01/Superpowers%E4%B8%8EOpenSpec%E5%8D%8F%E5%90%8C%E7%BC%96%E7%A0%81%E5%AE%9E%E8%B7%B5/</url>
+    <content><![CDATA[<p>本文说明如何在 Claude Code 中同时使用 <strong>Superpowers</strong>（代理工作流与技能体系）与 <strong>OpenSpec</strong>（结构化规范与变更管理），形成「规范驱动 + 纪律执行 + 可追溯归档」的闭环。</p>
+<hr>
+<h2 id="一、Superpowers- 简介"><a href="# 一、Superpowers- 简介" class="headerlink" title="一、Superpowers 简介"></a>一、Superpowers 简介</h2><p><strong>Superpowers</strong> 是一套面向编码代理的完整软件开发工作流：基于可组合的「技能（Skills）」与初始指令，让代理在动手写代码前先理解目标、产出可审阅的设计与可执行的计划，并在实现阶段强制执行测试驱动、代码审查等工程纪律。</p>
+<h3 id="1-1- 核心理念"><a href="#1-1- 核心理念" class="headerlink" title="1.1 核心理念"></a>1.1 核心理念</h3><ul>
+<li><strong>不急于写代码</strong>：一旦识别到你在「做东西」，代理会先厘清真实意图，再从对话中提炼出规格。</li>
+<li><strong>分块确认设计</strong>：将规格拆成足够短的段落供你阅读与消化，确认后再进入实现。</li>
+<li><strong>计划可交给他人执行</strong>：在你说「开始」后，生成足够清晰的实现计划，强调真正的红 &#x2F; 绿 TDD、YAGNI、DRY。</li>
+<li><strong>子代理驱动开发</strong>：可启动 <em>subagent-driven-development</em>，按工程任务推进、检查与评审，在既定计划下长时间自主工作而不跑偏。</li>
+<li><strong>技能自动触发</strong>：安装插件后，相关技能会在合适时机被调用，无需你记忆每条规则。</li>
+</ul>
+<h3 id="1-2- 功能概览"><a href="#1-2- 功能概览" class="headerlink" title="1.2 功能概览"></a>1.2 功能概览</h3><table>
+<thead>
+<tr>
+<th>能力</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>设计前置</td>
+<td>通过对话把想法变成经你签字的设计，再写代码。</td>
+</tr>
+<tr>
+<td>实现计划</td>
+<td>将设计拆成带路径、步骤、验证方式的任务。</td>
+</tr>
+<tr>
+<td>子代理 &#x2F; 分批执行</td>
+<td>多任务并行或分批执行，带审查与检查点。</td>
+</tr>
+<tr>
+<td>TDD 与审查</td>
+<td>测试先行、系统性调试、完成前验证。</td>
+</tr>
+<tr>
+<td>分支收尾</td>
+<td>工作区隔离（worktree）、合并 &#x2F;PR 决策与清理。</td>
+</tr>
+</tbody></table>
+<h3 id="1-3- 安装"><a href="#1-3- 安装" class="headerlink" title="1.3 安装"></a>1.3 安装</h3><ul>
+<li><strong>官方插件市场</strong>：<code>/plugin install superpowers@claude-plugins-official</code></li>
+<li><strong>自定义市场</strong>：先 <code>/plugin marketplace add obra/superpowers-marketplace</code>，再 <code>/plugin install superpowers@superpowers-marketplace</code></li>
+<li><strong>更新</strong>：<code>/plugin update superpowers</code></li>
+<li><strong>验证</strong>：新会话中提出会触发技能的需求（例如「帮我规划这个功能」），代理应自动调用对应 Superpowers 技能。</li>
+</ul>
+<h3 id="1-4- 基本工作流"><a href="#1-4- 基本工作流" class="headerlink" title="1.4 基本工作流"></a>1.4 基本工作流</h3><ol>
+<li><strong>brainstorming</strong> — 写代码前激活；用问答澄清想法、对比方案、分节呈现设计并保存设计文档。</li>
+<li><strong>using-git-worktrees</strong> — 设计批准后；在新分支上创建隔离工作区、跑项目初始化、确认干净测试基线。</li>
+<li><strong>writing-plans</strong> — 有已批准设计后；拆成小块任务（约 2–5 分钟级），含明确文件路径、代码要点、验证步骤。</li>
+<li><strong>subagent-driven-development</strong> &#x2F; <strong>executing-plans</strong> — 有计划后；每任务派生子代理，两阶段审查（符合规格 → 代码质量），或分批执行与人机检查点。</li>
+<li><strong>test-driven-development</strong> — 实现中；红 - 绿 - 重构，先写失败测试、见红、写最小实现、见绿、提交；禁止测试前写实现代码。</li>
+<li><strong>requesting-code-review</strong> — 任务间；对照计划审查，按严重程度报告问题，严重问题阻塞继续。</li>
+<li><strong>finishing-a-development-branch</strong> — 任务完成后；跑测试、给出合并 &#x2F;PR&#x2F; 保留 &#x2F; 丢弃等选项并清理 worktree。</li>
+</ol>
+<p><strong>说明 </strong>：代理在执行任务前会检查相关技能；这些流程是<strong> 强制性工作流</strong>，不是可选建议。</p>
+<h3 id="1-5-Superpowers-Skills- 详解"><a href="#1-5-Superpowers-Skills- 详解" class="headerlink" title="1.5 Superpowers Skills 详解"></a>1.5 Superpowers Skills 详解 </h3><p><strong> 测试</strong></p>
+<ul>
+<li><strong>test-driven-development</strong>：红 - 绿 - 重构循环（含测试反模式参考）。</li>
+</ul>
+<p><strong>调试</strong></p>
+<ul>
+<li><strong>systematic-debugging</strong>：四阶段根因分析（含根因追踪、纵深防御、基于条件的等待等）。</li>
+<li><strong>verification-before-completion</strong>：在宣称完成前验证确实修好了。</li>
+</ul>
+<p><strong>协作</strong></p>
+<ul>
+<li><strong>brainstorming</strong>：苏格拉底式设计澄清。</li>
+<li><strong>writing-plans</strong>：详细实现计划。</li>
+<li><strong>executing-plans</strong>：带检查点的分批执行。</li>
+<li><strong>dispatching-parallel-agents</strong>：并发子代理工作流。</li>
+<li><strong>requesting-code-review</strong>：评审前检查清单。</li>
+<li><strong>receiving-code-review</strong>：处理评审意见（先核实再改）。</li>
+<li><strong>using-git-worktrees</strong>：并行开发分支隔离。</li>
+<li><strong>finishing-a-development-branch</strong>：合并与收尾决策。</li>
+<li><strong>subagent-driven-development</strong>：快速迭代 + 两阶段审查。</li>
+</ul>
+<p><strong>元能力</strong></p>
+<ul>
+<li><strong>writing-skills</strong>：按规范编写与测试新技能。</li>
+<li><strong>using-superpowers</strong>：技能体系入门。</li>
+</ul>
+<h3 id="1-6- 哲学与使用场景"><a href="#1-6- 哲学与使用场景" class="headerlink" title="1.6 哲学与使用场景"></a>1.6 哲学与使用场景 </h3><p><strong> 哲学</strong></p>
+<ul>
+<li>测试驱动开发：先写测试。</li>
+<li>系统性优于随意：流程优于猜。</li>
+<li>降低复杂度：简单优先。</li>
+<li>证据优于断言：宣称成功前先验证。</li>
+</ul>
+<p><strong>典型使用场景</strong></p>
+<ul>
+<li>新功能从 0 到 1：先设计、再计划、再 TDD 实现。</li>
+<li>复杂缺陷：用 systematic-debugging 与 verification-before-completion。</li>
+<li>多人 &#x2F; 多代理协作：worktree + subagent-driven-development + code review。</li>
+<li>长期可维护：计划与审查强制对齐规格与质量。</li>
+</ul>
+<p>延伸阅读：<a href="https://blog.fsck.com/2025/10/09/superpowers/">Superpowers for Claude Code</a>。</p>
+<hr>
+<h2 id="二、OpenSpec- 简介"><a href="# 二、OpenSpec- 简介" class="headerlink" title="二、OpenSpec 简介"></a>二、OpenSpec 简介 </h2><p><strong>OpenSpec</strong> 帮助你和 AI 在<strong> 写任何代码之前 </strong> 就对「要构建什么」达成一致，并把约定落在仓库里的结构化工件（artifacts）中。</p>
+<h3 id="2-1- 功能概览"><a href="#2-1- 功能概览" class="headerlink" title="2.1 功能概览"></a>2.1 功能概览</h3><table>
+<thead>
+<tr>
+<th>维度</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>规范即事实</td>
+<td><code>openspec/specs/</code> 描述系统 <strong> 当前 </strong> 行为，按领域组织（如 <code>auth/</code>）。</td>
+</tr>
+<tr>
+<td>变更隔离</td>
+<td><code>openspec/changes/&lt;change-name&gt;/</code> 承载单次变更的 proposal、delta specs、design、tasks。</td>
+</tr>
+<tr>
+<td>Delta 规格</td>
+<td>用 ADDED&#x2F;MODIFIED&#x2F;REMOVED 等区块表达相对主规格的增量，归档时再合并进主规格。</td>
+</tr>
+<tr>
+<td>动作非阶段</td>
+<td>OPSX 强调可执行的命令（propose、apply、archive 等），而非锁死的线性阶段。</td>
+</tr>
+</tbody></table>
+<h3 id="2-2- 初始化后目录结构（openspec-init- 之后）"><a href="#2-2- 初始化后目录结构（openspec-init- 之后）" class="headerlink" title="2.2 初始化后目录结构（openspec init 之后）"></a>2.2 初始化后目录结构（<code>openspec init</code> 之后）</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">openspec/</span><br><span class="line">├── specs/              # 真相源：系统行为</span><br><span class="line">│   └── &lt;domain&gt;/</span><br><span class="line">│       └── spec.md</span><br><span class="line">├── changes/            # 每个变更一个目录</span><br><span class="line">│   └── &lt;change-name&gt;/</span><br><span class="line">│       ├── proposal.md</span><br><span class="line">│       ├── design.md</span><br><span class="line">│       ├── tasks.md</span><br><span class="line">│       └── specs/      # Delta specs</span><br><span class="line">│           └── &lt;domain&gt;/</span><br><span class="line">│               └── spec.md</span><br><span class="line">└── config.yaml         # 可选项目配置</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-3- 工件（Artifacts）说明"><a href="#2-3- 工件（Artifacts）说明" class="headerlink" title="2.3 工件（Artifacts）说明"></a>2.3 工件（Artifacts）说明</h3><table>
+<thead>
+<tr>
+<th>工件</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>proposal.md</code></td>
+<td>为什么做、做什么、范围与思路。</td>
+</tr>
+<tr>
+<td><code>specs/</code>（delta）</td>
+<td>相对主规格的增删改需求与场景。</td>
+</tr>
+<tr>
+<td><code>design.md</code></td>
+<td>怎么做：技术与架构决策。</td>
+</tr>
+<tr>
+<td><code>tasks.md</code></td>
+<td>可勾选的实现清单。</td>
+</tr>
+</tbody></table>
+<p>依赖关系可概括为：<code>proposal → specs → design → tasks → implement</code>，实现过程中可回头修订上游工件。</p>
+<h3 id="2-4- 两种路径：默认（core）与扩展"><a href="#2-4- 两种路径：默认（core）与扩展" class="headerlink" title="2.4 两种路径：默认（core）与扩展"></a>2.4 两种路径：默认（core）与扩展 </h3><p><strong> 默认 core 配置</strong>（全局 profile 常为 <code>core</code>）：</p>
+<figure class="highlight text"><table><tr><td class="code"><pre><span class="line">/opsx:propose ──► /opsx:apply ──► /opsx:archive</span><br></pre></td></tr></table></figure>
+
+<p>另含 <code>/opsx:explore</code>（先探索再立项）。</p>
+<p><strong>扩展工作流</strong>（需 <code>openspec config profile</code> 选择工作流后执行 <code>openspec update</code>）：</p>
+<figure class="highlight text"><table><tr><td class="code"><pre><span class="line">/opsx:new ──► /opsx:ff 或 /opsx:continue ──► /opsx:apply ──► /opsx:verify ──► /opsx:archive</span><br></pre></td></tr></table></figure>
+
+<p>并可使用 <code>/opsx:sync</code>、<code>/opsx:bulk-archive</code>、<code>/opsx:onboard</code> 等。</p>
+<h3 id="2-5-slash- 命令速览（Claude-Code 内）"><a href="#2-5-slash- 命令速览（Claude-Code 内）" class="headerlink" title="2.5  slash 命令速览（Claude Code 内）"></a>2.5  slash 命令速览（Claude Code 内）</h3><p><strong>core</strong></p>
+<table>
+<thead>
+<tr>
+<th>命令</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>/opsx:propose</code></td>
+<td>创建变更并一次性生成规划工件，直到可 <code>/opsx:apply</code>。</td>
+</tr>
+<tr>
+<td><code>/opsx:explore</code></td>
+<td>在承诺变更前探索想法、调研代码、对比方案。</td>
+</tr>
+<tr>
+<td><code>/opsx:apply</code></td>
+<td>按 <code>tasks.md</code> 实现并勾选任务。</td>
+</tr>
+<tr>
+<td><code>/opsx:archive</code></td>
+<td>归档完成项，合并 delta 到主规格（并提示 sync）。</td>
+</tr>
+</tbody></table>
+<p><strong>扩展（节选）</strong></p>
+<table>
+<thead>
+<tr>
+<th>命令</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>/opsx:new</code></td>
+<td>新建变更脚手架，再等 <code>continue</code> 或 <code>ff</code>。</td>
+</tr>
+<tr>
+<td><code>/opsx:continue</code></td>
+<td>按依赖链每次生成下一个工件。</td>
+</tr>
+<tr>
+<td><code>/opsx:ff</code></td>
+<td>快进生成全部规划工件。</td>
+</tr>
+<tr>
+<td><code>/opsx:verify</code></td>
+<td>从完整性、正确性、一致性三方面对照工件检查实现。</td>
+</tr>
+<tr>
+<td><code>/opsx:sync</code></td>
+<td>将 delta 合并进主规格（不归档；归档时也会提示）。</td>
+</tr>
+<tr>
+<td><code>/opsx:bulk-archive</code></td>
+<td>批量归档多个变更并处理规格冲突。</td>
+</tr>
+<tr>
+<td><code>/opsx:onboard</code></td>
+<td>引导式走完一轮真实工作流。</td>
+</tr>
+</tbody></table>
+<p><strong>工具差异</strong>：Claude Code 常用 <code>/opsx:propose</code> 形式；部分 IDE 使用 <code>/opsx-propose</code> 等变体，语义一致（见 <code>commands.md</code>）。</p>
+<h3 id="2-6-CLI- 要点"><a href="#2-6-CLI- 要点" class="headerlink" title="2.6 CLI 要点"></a>2.6 CLI 要点 </h3><p> 与聊天命令互补，常用于人类与脚本 &#x2F; 代理：</p>
+<table>
+<thead>
+<tr>
+<th>类别</th>
+<th>命令</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>安装</td>
+<td><code>openspec init</code></td>
+<td>初始化目录与工具集成（可加 <code>--tools claude</code> 等）。</td>
+</tr>
+<tr>
+<td>更新</td>
+<td><code>openspec update</code></td>
+<td>升级 CLI 后重生成 AI 侧配置。</td>
+</tr>
+<tr>
+<td>浏览</td>
+<td><code>openspec list</code>、<code>openspec show</code>、<code>openspec view</code></td>
+<td>列出 &#x2F; 查看变更与规格。</td>
+</tr>
+<tr>
+<td>校验</td>
+<td><code>openspec validate</code></td>
+<td>校验工件结构（可 <code>--all --json</code> 供 CI）。</td>
+</tr>
+<tr>
+<td>工作流</td>
+<td><code>openspec status</code>、<code>openspec instructions</code></td>
+<td>查看工件进度与下一步指令（支持 <code>--json</code>）。</td>
+</tr>
+<tr>
+<td>归档</td>
+<td><code>openspec archive</code></td>
+<td>命令行归档（可 <code>--yes</code>、<code>--skip-specs</code> 等）。</td>
+</tr>
+<tr>
+<td>配置</td>
+<td><code>openspec config profile</code></td>
+<td>调整全局 profile 与工作流，再 <code>openspec update</code> 同步到项目。</td>
+</tr>
+</tbody></table>
+<h3 id="2-7- 典型使用场景"><a href="#2-7- 典型使用场景" class="headerlink" title="2.7 典型使用场景"></a>2.7 典型使用场景</h3><ul>
+<li><strong>快速功能</strong>：已知需求 → <code>propose</code>（或 <code>new</code> + <code>ff</code>）→ <code>apply</code> → <code>verify</code>（扩展）→ <code>archive</code>。</li>
+<li><strong>需求不清</strong>：先 <code>/opsx:explore</code>，再 <code>propose</code>&#x2F;<code>new</code>。</li>
+<li><strong>并行变更</strong>：多个 <code>changes</code> 并行；完成后 <code>bulk-archive</code> 处理多变更与规格合并顺序。</li>
+<li><strong>归档前自检</strong>：<code>/opsx:verify</code> 检查任务是否完成、需求是否落地、设计是否与代码一致。</li>
+</ul>
+<hr>
+<h2 id="三、Superpowers- 与 -OpenSpec- 协同工作流闭环"><a href="# 三、Superpowers- 与 -OpenSpec- 协同工作流闭环" class="headerlink" title="三、Superpowers 与 OpenSpec 协同工作流闭环"></a>三、Superpowers 与 OpenSpec 协同工作流闭环 </h2><p> 两者分工可概括为：</p>
+<table>
+<thead>
+<tr>
+<th>角色</th>
+<th>承担者</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>定方向</strong></td>
+<td>OpenSpec</td>
+<td>把需求变成结构化规范（proposal、delta specs、design、tasks），<code>openspec/specs/</code> 作为仓库内 <strong> 唯一事实源 </strong> 的长期载体；变更期以 <code>openspec/changes/...</code> 为当前迭代的真相。</td>
+</tr>
+<tr>
+<td><strong>保执行</strong></td>
+<td>Superpowers</td>
+<td>严格按已写明的规格与任务落地；通过 brainstorming → writing-plans → TDD → code review → verification-before-completion 等技能 <strong> 强制执行工程纪律</strong>。</td>
+</tr>
+<tr>
+<td><strong>管结果</strong></td>
+<td>OpenSpec</td>
+<td>实现完成后 <code>archive</code>（及可选 <code>verify</code>、<code>sync</code>），把 delta 合并进主规格，变更目录进入 <code>archive/</code>，形成 <strong> 可追溯、可审计 </strong> 的迭代闭环。</td>
+</tr>
+</tbody></table>
+<p><strong>闭环示意</strong></p>
+<figure class="highlight text"><table><tr><td class="code"><pre><span class="line">[OpenSpec 定方向]</span><br><span class="line">  propose / new+ff → 工件齐全 → specs 与 tasks 可读、可审</span><br><span class="line"></span><br><span class="line">        ↓</span><br><span class="line">[Superpowers 保执行]</span><br><span class="line">  （可选）brainstorming 与 OpenSpec proposal 对齐口头意图</span><br><span class="line">  writing-plans 与 tasks.md 对齐粒度</span><br><span class="line">  TDD + review + verification 对照 delta specs 与 design</span><br><span class="line"></span><br><span class="line">        ↓</span><br><span class="line">[OpenSpec 管结果]</span><br><span class="line">  verify（可选）→ archive → 主 specs 更新 → 变更归档</span><br></pre></td></tr></table></figure>
+
+<p><strong>实践要点</strong></p>
+<ol>
+<li><strong>单一事实源</strong>：实现时以 OpenSpec 工件的「需求与场景」为准；Superpowers 的计划应引用或对应 <code>tasks.md</code> 与规格中的 Scenario。</li>
+<li><strong>先规格后红绿</strong>：OpenSpec 把「做什么」说清；Superpowers TDD 把「怎么证明做对」落实。</li>
+<li><strong>漂移即修文档</strong>：若实现中发现规格不合理，先改 <code>proposal</code>&#x2F;<code>specs</code>&#x2F;<code>design</code>&#x2F;<code>tasks</code>，再改代码，保持闭环一致。</li>
+<li><strong>完成定义</strong>：除代码与测试外，包含「已 archive、主规格已反映行为」才算迭代完成。</li>
+</ol>
+<hr>
+<h2 id="四、案例：登录功能 -—-Superpowers-OpenSpec- 协同"><a href="# 四、案例：登录功能 -—-Superpowers-OpenSpec- 协同" class="headerlink" title="四、案例：登录功能 — Superpowers + OpenSpec 协同"></a>四、案例：登录功能 — Superpowers + OpenSpec 协同 </h2><p> 以下按 <strong> 时间顺序 </strong> 走通「邮箱 + 密码登录」端到端案例。假设为常见 Web 应用（Node&#x2F;Express、Next.js、Rails 等均可类比）。<strong>Claude Code</strong> 使用 <code>/opsx:...</code>；<strong>终端 </strong> 命令为 CLI。</p>
+<p><strong>变更名 </strong>：<code>add-email-password-login</code><br><strong> 变更目录</strong>：<code>openspec/changes/add-email-password-login/</code>（下文简称「变更目录」）。</p>
+<hr>
+<h3 id="4-0- 前置条件"><a href="#4-0- 前置条件" class="headerlink" title="4.0 前置条件"></a>4.0 前置条件</h3><table>
+<thead>
+<tr>
+<th>检查项</th>
+<th>建议做法</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Superpowers 已装</td>
+<td><code>/plugin install superpowers@claude-plugins-official</code>（或你环境里的市场路径）</td>
+<td>否则 brainstorming &#x2F; TDD &#x2F; review 等纪律不会稳定触发。</td>
+</tr>
+<tr>
+<td>OpenSpec CLI 可用</td>
+<td>终端：<code>openspec --version</code></td>
+<td>无 CLI 则无法 <code>init</code>、校验、归档。</td>
+</tr>
+<tr>
+<td>仓库状态清晰</td>
+<td><code>git status</code> 无意外未提交改动，或先提交 &#x2F; 暂存</td>
+<td><strong>using-git-worktrees</strong> 与合并时减少干扰。</td>
+</tr>
+<tr>
+<td>需求粗范围已定</td>
+<td>若「是否 OAuth &#x2F; 2FA &#x2F; 仅 API 无 UI」完全未决</td>
+<td>先做 <strong>4.1.3</strong> 的 explore，避免反复改 delta specs。</td>
+</tr>
+</tbody></table>
+<hr>
+<h3 id="4-1- 阶段一：仓库接入 -OpenSpec"><a href="#4-1- 阶段一：仓库接入 -OpenSpec" class="headerlink" title="4.1 阶段一：仓库接入 OpenSpec"></a>4.1 阶段一：仓库接入 OpenSpec</h3><p><strong>4.1.1 初始化</strong></p>
+<table>
+<thead>
+<tr>
+<th>步骤</th>
+<th>命令 &#x2F; 操作</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1</td>
+<td>在项目根目录终端：<code>openspec init</code></td>
+<td>生成 <code>openspec/specs/</code>、<code>openspec/changes/</code>、可选 <code>openspec/config.yaml</code>；按提示勾选 <strong>Claude</strong> 时写入 <code>.claude/skills/</code> 等，聊天里才能稳定识别 <code>/opsx:*</code>。</td>
+</tr>
+<tr>
+<td>2</td>
+<td>（可选）非交互：<code>openspec init --tools claude --force</code></td>
+<td>脚本 &#x2F;CI 初始化；<code>--force</code> 会处理遗留文件，用前确认无重要未备份改动。</td>
+</tr>
+<tr>
+<td>3</td>
+<td><code>openspec list</code></td>
+<td>确认 CLI 与路径正确（通常尚无活动变更）。</td>
+</tr>
+</tbody></table>
+<p><strong>4.1.2（可选）启用扩展工作流</strong></p>
+<p>需要 <code>/opsx:new</code>、<code>/opsx:ff</code>、<code>/opsx:verify</code>、<code>/opsx:sync</code> 时：</p>
+<table>
+<thead>
+<tr>
+<th>步骤</th>
+<th>命令</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1</td>
+<td><code>openspec config profile</code></td>
+<td>交互式勾选扩展工作流；默认 <code>core</code> 仅有 propose &#x2F; explore &#x2F; apply &#x2F; archive。</td>
+</tr>
+<tr>
+<td>2</td>
+<td><code>openspec update</code></td>
+<td>把全局 profile 同步到 <strong> 当前项目 </strong> 的 AI 指令与命令文件。</td>
+</tr>
+<tr>
+<td>3</td>
+<td>新开或重启 Claude Code 会话</td>
+<td>确保新 slash 命令被加载。</td>
+</tr>
+</tbody></table>
+<p><strong>4.1.3（可选）需求不清时先探索</strong></p>
+<table>
+<thead>
+<tr>
+<th>步骤</th>
+<th>命令</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1</td>
+<td><code>/opsx:explore</code></td>
+<td>不创建变更工件；代理可读代码、对比 Session vs JWT、登录错误是否防枚举、速率限制放哪一层等。</td>
+</tr>
+<tr>
+<td>2</td>
+<td>对话收敛后，再进入 <strong>4.2</strong></td>
+<td>减少 proposal &#x2F; specs 的大幅返工。</td>
+</tr>
+</tbody></table>
+<hr>
+<h3 id="4-2- 阶段二：OpenSpec- 定方向"><a href="#4-2- 阶段二：OpenSpec- 定方向" class="headerlink" title="4.2 阶段二：OpenSpec 定方向"></a>4.2 阶段二：OpenSpec 定方向</h3><p><strong>4.2.1 路径 A — core：一条命令生成全套规划工件</strong></p>
+<table>
+<thead>
+<tr>
+<th>步骤</th>
+<th>命令</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1</td>
+<td><code>/opsx:propose add-email-password-login</code></td>
+<td>创建变更目录，并生成 <code>proposal.md</code>、delta <code>specs/**/spec.md</code>、<code>design.md</code>、<code>tasks.md</code>。</td>
+</tr>
+<tr>
+<td>2</td>
+<td><code>openspec status --change add-email-password-login</code></td>
+<td>查看 proposal &#x2F; specs &#x2F; design &#x2F; tasks 是否齐全；加 <code>--json</code> 便于代理解析。</td>
+</tr>
+</tbody></table>
+<p><strong>4.2.2 路径 B — 扩展：脚手架后分步或快进</strong></p>
+<table>
+<thead>
+<tr>
+<th>步骤</th>
+<th>命令</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1</td>
+<td><code>/opsx:new add-email-password-login</code></td>
+<td>只建变更目录与元数据（如 <code>.openspec.yaml</code>），工件未一次性填满。</td>
+</tr>
+<tr>
+<td>2a</td>
+<td>多次 <code>/opsx:continue</code>（可带变更名）</td>
+<td>每次 <strong> 只生成下一个 </strong> 工件：通常 proposal → specs → design → tasks；每步可手改文件再继续。</td>
+</tr>
+<tr>
+<td>2b</td>
+<td><code>/opsx:ff add-email-password-login</code></td>
+<td><strong>快进 </strong> 生成与 <code>propose</code> 等价的全部规划工件，适合范围已非常清晰时。</td>
+</tr>
+</tbody></table>
+<p><strong>4.2.3 生成后目录</strong></p>
+<figure class="highlight text"><table><tr><td class="code"><pre><span class="line">openspec/changes/add-email-password-login/</span><br><span class="line">├── proposal.md</span><br><span class="line">├── design.md</span><br><span class="line">├── tasks.md</span><br><span class="line">└── specs/</span><br><span class="line">    └── auth/</span><br><span class="line">        └── spec.md          # delta：相对主 specs/auth/spec.md</span><br></pre></td></tr></table></figure>
+
+<p><strong>4.2.4 人工审阅清单（通过后再写代码）</strong></p>
+<p>对 <strong>proposal.md</strong>：</p>
+<ul>
+<li><strong>Intent</strong>：为何需要邮箱密码登录（新用户入口、与现有 IdP 关系）。</li>
+<li><strong>Scope</strong>：是否包含注册、忘记密码、邮件验证；<strong>明确 Out of scope</strong>（如本变更不做 OAuth、不做 2FA）。</li>
+</ul>
+<p>对 <strong>delta specs（如 specs&#x2F;auth&#x2F;spec.md）</strong>：</p>
+<ul>
+<li>每条 <strong>Requirement</strong> 下是否有可验收的 <strong>Scenario</strong>（Given &#x2F; When &#x2F; Then）。</li>
+<li>至少覆盖：成功登录；密码错误；邮箱不存在（若产品要求与密码错误「同文案」防枚举，必须在 scenario 写死）。</li>
+<li>若规格包含：速率限制、账户锁定、「记住我」、会话时长，各对应 scenario。</li>
+</ul>
+<p>对 <strong>design.md</strong>：</p>
+<ul>
+<li>路由与方法（如 <code>POST /api/auth/login</code>）、请求 &#x2F; 响应 JSON 形状、成功与失败 HTTP 状态码。</li>
+<li>密码哈希（如 bcrypt 与 cost）、会话（cookie 名、HttpOnly、Secure、SameSite）、CSRF（若用 cookie 会话）。</li>
+<li>与现有用户表 &#x2F; 迁移的关系；环境变量（如 <code>SESSION_SECRET</code>）。</li>
+</ul>
+<p>对 <strong>tasks.md</strong>：</p>
+<ul>
+<li>任务顺序是否合理（先后端契约 &#x2F; 集成测试再 UI 等）。</li>
+<li>编号是否稳定，便于 <strong>writing-plans</strong> 逐步引用。</li>
+</ul>
+<p><strong>4.2.5 示例：delta 规格片段（形态参考；以代理生成为准）</strong></p>
+<figure class="highlight markdown"><table><tr><td class="code"><pre><span class="line"><span class="section">## ADDED Requirements</span></span><br><span class="line"></span><br><span class="line"><span class="section">### Requirement: Email and password login</span></span><br><span class="line">The system SHALL authenticate a user who submits a registered email and correct password.</span><br><span class="line"></span><br><span class="line"><span class="section">#### Scenario: Successful login</span></span><br><span class="line"><span class="bullet">-</span> GIVEN a registered user with a verified email</span><br><span class="line"><span class="bullet">-</span> WHEN they POST valid credentials to the login endpoint</span><br><span class="line"><span class="bullet">-</span> THEN the response indicates success</span><br><span class="line"><span class="bullet">-</span> AND a session is established as described in design.md</span><br><span class="line"></span><br><span class="line"><span class="section">#### Scenario: Invalid password</span></span><br><span class="line"><span class="bullet">-</span> GIVEN a registered user</span><br><span class="line"><span class="bullet">-</span> WHEN they submit a wrong password</span><br><span class="line"><span class="bullet">-</span> THEN the login fails</span><br><span class="line"><span class="bullet">-</span> AND the error response follows the anti-enumeration rule in design.md (if applicable)</span><br></pre></td></tr></table></figure>
+
+<p><strong>4.2.6 校验</strong></p>
+<table>
+<thead>
+<tr>
+<th>命令</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>openspec validate add-email-password-login</code></td>
+<td>检查工件结构与 delta 格式。</td>
+</tr>
+<tr>
+<td><code>openspec show add-email-password-login</code></td>
+<td>人类通读摘要；测试管线可加 <code>--json</code>。</td>
+</tr>
+</tbody></table>
+<p>审阅中若修改了 specs 或 tasks，应再次 <code>validate</code> 直至无阻塞问题。</p>
+<hr>
+<h3 id="4-3- 阶段三：Superpowers- 保执行（与 -OpenSpec- 对齐）"><a href="#4-3- 阶段三：Superpowers- 保执行（与 -OpenSpec- 对齐）" class="headerlink" title="4.3 阶段三：Superpowers 保执行（与 OpenSpec 对齐）"></a>4.3 阶段三：Superpowers 保执行（与 OpenSpec 对齐）</h3><p>本阶段 <strong> 不替代</strong> <code>/opsx:apply</code>，而是把工程纪律钉在仓库里的工件上。</p>
+<p><strong>4.3.1 建议顺序与对话示例</strong></p>
+<table>
+<thead>
+<tr>
+<th>顺序</th>
+<th>技能</th>
+<th>你可以在聊天里这样说（示例）</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1</td>
+<td>brainstorming</td>
+<td>「请对照 <code>openspec/changes/add-email-password-login/proposal.md</code> 和 delta specs，用 brainstorming 流程列出遗漏场景；先不要写代码。」</td>
+<td>口头需求与仓库 <strong> 唯一事实源 </strong> 对齐。</td>
+</tr>
+<tr>
+<td>2</td>
+<td>using-git-worktrees</td>
+<td>「为本变更建 worktree，分支名 <code>feat/email-password-login</code>，并确认测试基线通过。」</td>
+<td>隔离开发，便于 <strong>finishing-a-development-branch</strong> 收尾。</td>
+</tr>
+<tr>
+<td>3</td>
+<td>writing-plans</td>
+<td>「OpenSpec 已有 <code>tasks.md</code>（路径如上）。请生成与任务编号一一对应的实现计划，每条写明文件路径与要跑的测试命令。」</td>
+<td>计划与 <code>tasks.md</code> 勾选粒度一致，便于审计。</td>
+</tr>
+<tr>
+<td>4</td>
+<td>test-driven-development + 后续 apply</td>
+<td>见 <strong>4.4</strong></td>
+<td>红 - 绿 - 重构；<code>/opsx:apply</code> 负责按清单推进并勾选。</td>
+</tr>
+<tr>
+<td>5</td>
+<td>requesting-code-review</td>
+<td>「对照 delta specs 的每个 Scenario 和 <code>design.md</code> 做 review；严重问题先修再继续下一组任务。」</td>
+<td>防止实现偏离规格。</td>
+</tr>
+<tr>
+<td>6</td>
+<td>verification-before-completion</td>
+<td>「宣称完成前：跑全量相关测试，并列出每个 Scenario 对应的测试或手动检查步骤。」</td>
+<td>有证据再交付。</td>
+</tr>
+</tbody></table>
+<p><strong>4.3.2 建议粘贴给代理的约束</strong></p>
+<figure class="highlight text"><table><tr><td class="code"><pre><span class="line">实现范围仅限 openspec/changes/add-email-password-login/ 下的 proposal、delta specs、design、tasks。</span><br><span class="line">若代码行为与规格冲突，先更新 OpenSpec 工件并 openspec validate 通过，再改代码。</span><br></pre></td></tr></table></figure>
+
+<p><strong>4.3.3 tasks.md 拆分示例（理解 TDD 如何逐项落地）</strong></p>
+<figure class="highlight markdown"><table><tr><td class="code"><pre><span class="line"><span class="section"># Tasks</span></span><br><span class="line"></span><br><span class="line"><span class="section">## 1. Backend: login endpoint</span></span><br><span class="line"><span class="bullet">-</span> [] 1.1 为 POST /api/auth/login（以 design.md 为准）编写集成 / 契约测试（先失败）</span><br><span class="line"><span class="bullet">-</span> [] 1.2 实现：解析 body、按邮箱查用户、校验密码哈希</span><br><span class="line"><span class="bullet">-</span> [] 1.3 成功：建立会话并 Set-Cookie；失败：统一错误体与状态码</span><br><span class="line"></span><br><span class="line"><span class="section">## 2. Security</span></span><br><span class="line"><span class="bullet">-</span> [] 2.1 Cookie 属性与设计一致（HttpOnly、Secure、SameSite）</span><br><span class="line"><span class="bullet">-</span> [] 2.2 （若 specs 要求）登录失败速率限制或锁定的测试与实现</span><br><span class="line"></span><br><span class="line"><span class="section">## 3. Frontend（若 scope 含 UI）</span></span><br><span class="line"><span class="bullet">-</span> [] 3.1 登录表单与可访问性</span><br><span class="line"><span class="bullet">-</span> [] 3.2 联调 API；错误展示符合 scenario</span><br><span class="line"></span><br><span class="line"><span class="section">## 4. Ops / docs</span></span><br><span class="line"><span class="bullet">-</span> [] 4.1 README 或 .env.example 中的 SESSION<span class="emphasis">_SECRET 等说明</span></span><br></pre></td></tr></table></figure>
+
+<p>每个 checkbox 建议遵循：<strong>写测（红）→ 最小实现（绿）→ 重构 → 勾任务</strong>。</p>
+<hr>
+<h3 id="4-4- 阶段四：实现与勾选（-opsx-apply-TDD）"><a href="#4-4- 阶段四：实现与勾选（-opsx-apply-TDD）" class="headerlink" title="4.4 阶段四：实现与勾选（/opsx:apply + TDD）"></a>4.4 阶段四：实现与勾选（<code>/opsx:apply</code> + TDD）</h3><p><strong>4.4.1 启动与续跑</strong></p>
+<table>
+<thead>
+<tr>
+<th>步骤</th>
+<th>命令</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1</td>
+<td><code>/opsx:apply add-email-password-login</code></td>
+<td>读 <code>tasks.md</code>，逐项实现并勾选；会话中断后可 <strong> 再次 </strong> 带同名变更执行以续跑。</td>
+</tr>
+<tr>
+<td>2</td>
+<td><code>openspec instructions apply --change add-email-password-login</code></td>
+<td>终端输出「下一步实现」的增强指令（含依赖工件），可粘贴进对话。</td>
+</tr>
+</tbody></table>
+<p><strong>4.4.2 单个 checkbox 的微观步骤（建议每个任务重复）</strong></p>
+<ol>
+<li>在 delta specs 中定位对应 <strong>Scenario</strong>，确定断言（状态码、Set-Cookie、<code>Set-Cookie</code> 属性、JSON 字段）。</li>
+<li>编写自动化测试（项目惯例：单元、集成或 E2E）；运行，确认 <strong> 失败 </strong> 且失败原因符合预期（真红）。</li>
+<li>写最少生产代码使测试通过；避免先写大量实现再补测（违反 Superpowers TDD）。</li>
+<li>跑相关测试与 lint；通过后把 <code>tasks.md</code> 该项改为 <code>[x]</code>。</li>
+<li>每完成一组相关任务，可再触发 <strong>requesting-code-review</strong>。</li>
+</ol>
+<p><strong>4.4.3 实现中发现规格与代码不一致时</strong></p>
+<table>
+<thead>
+<tr>
+<th>情况</th>
+<th>操作</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>仅实现细节（文件名、拆分模块）</td>
+<td>直接改代码。</td>
+</tr>
+<tr>
+<td>行为与 delta specs 或 design 冲突</td>
+<td><strong>先 </strong> 改 <code>specs/**/spec.md</code>、<code>design.md</code> 或 <code>tasks.md</code>，执行 <code>openspec validate</code>，再改代码并固定测试。</td>
+</tr>
+</tbody></table>
+<hr>
+<h3 id="4-5- 阶段五：OpenSpec- 管结果（verify、sync、archive）"><a href="#4-5- 阶段五：OpenSpec- 管结果（verify、sync、archive）" class="headerlink" title="4.5 阶段五：OpenSpec 管结果（verify、sync、archive）"></a>4.5 阶段五：OpenSpec 管结果（verify、sync、archive）</h3><p><strong>4.5.1（扩展 profile）归档前验证</strong></p>
+<table>
+<thead>
+<tr>
+<th>步骤</th>
+<th>命令</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1</td>
+<td><code>/opsx:verify add-email-password-login</code></td>
+<td><strong>完整性 </strong>：tasks 是否全勾、需求是否像都已落地；<strong> 正确性 </strong>：scenario 与行为；<strong> 一致性</strong>：design 中的模块 &#x2F; 命名是否在代码中体现。</td>
+</tr>
+<tr>
+<td>2</td>
+<td>处理报告中的 CRITICAL；WARNING 可当场修或记债。</td>
+<td>verify <strong>不阻止</strong> archive，但应避免带着已知严重偏差关闭变更。</td>
+</tr>
+</tbody></table>
+<p><strong>4.5.2（可选）提前合并 delta 到主规格</strong></p>
+<table>
+<thead>
+<tr>
+<th>命令</th>
+<th>何时用</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>/opsx:sync add-email-password-login</code></td>
+<td>长周期变更、或并行变更需要他人基于 <strong> 已更新 </strong> 主 specs 开发</td>
+<td>合并 ADDED&#x2F;MODIFIED&#x2F;REMOVED 到 <code>openspec/specs/</code>，变更目录 <strong> 仍在</strong>，未归档。</td>
+</tr>
+</tbody></table>
+<p>小功能多数可直接在 archive 时合并，无需单独 sync。</p>
+<p><strong>4.5.3 归档</strong></p>
+<table>
+<thead>
+<tr>
+<th>步骤</th>
+<th>命令</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1</td>
+<td><code>/opsx:archive add-email-password-login</code></td>
+<td>检查工件与任务；提示是否 sync；确认后将变更移到 <code>openspec/changes/archive/YYYY-MM-DD-add-email-password-login/</code>。</td>
+</tr>
+<tr>
+<td>2</td>
+<td><code>openspec archive add-email-password-login</code></td>
+<td>CLI 归档；脚本可加 <code>--yes</code>；纯工具变更才考虑 <code>--skip-specs</code>（登录功能一般 <strong> 不要</strong> skip）。</td>
+</tr>
+</tbody></table>
+<p><strong>4.5.4 归档后自检</strong></p>
+<table>
+<thead>
+<tr>
+<th>命令</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>openspec list</code></td>
+<td>活动变更中不应再出现本变更名。</td>
+</tr>
+<tr>
+<td>打开 <code>openspec/specs/auth/spec.md</code>（或你的领域路径）</td>
+<td>确认 ADDED 内容已并入主规格。</td>
+</tr>
+<tr>
+<td><code>openspec validate --all</code></td>
+<td>全仓库规格与变更结构仍合法。</td>
+</tr>
+</tbody></table>
+<hr>
+<h3 id="4-6- 阶段六：Superpowers- 收尾（合并与清理）"><a href="#4-6- 阶段六：Superpowers- 收尾（合并与清理）" class="headerlink" title="4.6 阶段六：Superpowers 收尾（合并与清理）"></a>4.6 阶段六：Superpowers 收尾（合并与清理）</h3><table>
+<thead>
+<tr>
+<th>步骤</th>
+<th>技能 &#x2F; 动作</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1</td>
+<td><strong>finishing-a-development-branch</strong></td>
+<td>在 worktree 上跑全量测试，选择 merge 或开 PR，清理 worktree。</td>
+</tr>
+<tr>
+<td>2</td>
+<td><strong>verification-before-completion</strong></td>
+<td>合并前最后一次对照关键 scenario（CI + 必要时手动登录）。</td>
+</tr>
+</tbody></table>
+<hr>
+<h3 id="4-7- 完整命令与时间线速查"><a href="#4-7- 完整命令与时间线速查" class="headerlink" title="4.7 完整命令与时间线速查"></a>4.7 完整命令与时间线速查</h3><figure class="highlight text"><table><tr><td class="code"><pre><span class="line"># --- 一次性（仓库接入）---</span><br><span class="line">openspec init</span><br><span class="line">openspec config profile &amp;&amp; openspec update    # 仅当需要 new/ff/verify/sync</span><br><span class="line"></span><br><span class="line"># --- 定方向 ---</span><br><span class="line">/opsx:explore                                 # 可选：需求乱时</span><br><span class="line">/opsx:propose add-email-password-login        # core 主路径</span><br><span class="line"># 或：/opsx:new → 多次 /opsx:continue，或 /opsx:ff</span><br><span class="line"></span><br><span class="line">openspec validate add-email-password-login</span><br><span class="line"># 人工审阅 proposal / delta specs / design / tasks</span><br><span class="line"></span><br><span class="line"># --- 保执行（对话触发技能，无单一 slash 覆盖全部）---</span><br><span class="line"># brainstorming → using-git-worktrees → writing-plans</span><br><span class="line"># TDD + requesting-code-review 循环</span><br><span class="line"></span><br><span class="line">/opsx:apply add-email-password-login</span><br><span class="line"># 可选：openspec instructions apply --change add-email-password-login</span><br><span class="line"></span><br><span class="line"># --- 管结果 ---</span><br><span class="line">/opsx:verify add-email-password-login         # 扩展 profile</span><br><span class="line">/opsx:archive add-email-password-login</span><br><span class="line"># 或：openspec archive add-email-password-login --yes</span><br><span class="line"></span><br><span class="line">openspec validate --all</span><br><span class="line"># finishing-a-development-branch</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h3 id="4-8- 常见问题"><a href="#4-8- 常见问题" class="headerlink" title="4.8 常见问题"></a>4.8 常见问题</h3><table>
+<thead>
+<tr>
+<th>现象</th>
+<th>可能原因</th>
+<th>建议</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>/opsx:apply</code> 找不到变更</td>
+<td>当前目录不是项目根或未 init</td>
+<td><code>cd</code> 到根目录；<code>openspec list</code> 核对名称。</td>
+</tr>
+<tr>
+<td>实现与 specs 不一致</td>
+<td>代理未以变更目录为准</td>
+<td>粘贴 <strong>4.3.2</strong> 约束语；评审时逐条对照 Scenario。</td>
+</tr>
+<tr>
+<td>tasks 全勾但 verify 警告未测场景</td>
+<td>测试未映射到需求</td>
+<td>在测试中注释 requirement&#x2F;scenario id，或补测。</td>
+</tr>
+<tr>
+<td>多人改同一领域 spec</td>
+<td>并行变更冲突</td>
+<td>不同 <code>change-name</code>；完成后用 <strong>bulk-archive</strong> 按提示顺序合并。</td>
+</tr>
+</tbody></table>
+<hr>
+<h2 id="五、结语"><a href="# 五、结语" class="headerlink" title="五、结语"></a>五、结语</h2><ul>
+<li><strong>OpenSpec</strong> 解决「我们约定了什么、变更如何进主规格、如何追溯」。</li>
+<li><strong>Superpowers</strong> 解决「如何不跳步、如何测试先行、如何审查与验证再交付」。</li>
+<li>二者叠加时：<strong>规格在仓库里 </strong>，<strong> 纪律在技能链上 </strong>，<strong> 结果在 archive 与主 specs 里</strong>——适合在 Claude Code 中长期、可审计地迭代功能（如登录、权限、支付等）。</li>
+</ul>
+]]></content>
+  </entry>
+</search>
