@@ -1,0 +1,1298 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 7.3.0">
+<script>
+    (function () {
+        if ('') {
+            if (prompt('请输入文章密码') !== '') {
+                alert('密码错误！');
+                if (history.length === 1) {
+                    location.replace("https://emryscheng.github.io/");
+                } else {
+                    history.back();
+                }
+            }
+        }
+    })();
+</script>
+  <link rel="icon" type="image/png" sizes="16x16" href="/function%20()%20%7B%0A%20%20%20%20%20%20for%20(var%20_len2%20=%20arguments.length,%20args%20=%20new%20Array(_len2),%20_key2%20=%200;%20_key2%20%3C%20_len2;%20_key2++)%20%7B%0A%20%20%20%20%20%20%20%20args%5B_key2%5D%20=%20arguments%5B_key2%5D;%0A%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20return%20obj%5Bval%5D.apply(obj,%20args);%0A%20%20%20%20%7D">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-minimal.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"emryscheng.github.io","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="Claude-Mem 从入门到实践 适用 claude-mem 版本：6.x Claude-Mem —— 一个让 AI 编程助手拥有”长期记忆”的开源插件。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="claude-mem 从入门到实践">
+<meta property="og:url" content="https://emryscheng.github.io/2026/04/30/claude-mem%E4%BB%8E%E5%85%A5%E9%97%A8%E5%88%B0%E5%AE%9E%E8%B7%B5/index.html">
+<meta property="og:site_name" content="EmrysCheng的技术博客">
+<meta property="og:description" content="Claude-Mem 从入门到实践 适用 claude-mem 版本：6.x Claude-Mem —— 一个让 AI 编程助手拥有”长期记忆”的开源插件。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2026-04-30T08:22:54.000Z">
+<meta property="article:modified_time" content="2026-04-30T08:25:44.924Z">
+<meta property="article:author" content="EmrysCheng">
+<meta property="article:tag" content="Claude Code">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://emryscheng.github.io/2026/04/30/claude-mem%E4%BB%8E%E5%85%A5%E9%97%A8%E5%88%B0%E5%AE%9E%E8%B7%B5/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>claude-mem 从入门到实践 | EmrysCheng的技术博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<link rel="alternate" href="/atom.xml" title="EmrysCheng的技术博客" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">EmrysCheng的技术博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">专注于后端邻域开发</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-sitemap">
+
+    <a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a>
+
+  </li>
+        <li class="menu-item menu-item-commonweal">
+
+    <a href="/404/" rel="section"><i class="fa fa-heartbeat fa-fw"></i>公益 404</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://emryscheng.github.io/2026/04/30/claude-mem%E4%BB%8E%E5%85%A5%E9%97%A8%E5%88%B0%E5%AE%9E%E8%B7%B5/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="EmrysCheng">
+      <meta itemprop="description" content="本博客主要分享后端开发相关内容">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="EmrysCheng的技术博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          claude-mem 从入门到实践
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2026-04-30 16:22:54 / 修改时间：16:25:44" itemprop="dateCreated datePublished" datetime="2026-04-30T16:22:54+08:00">2026-04-30</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Claude-Code/" itemprop="url" rel="index"><span itemprop="name">Claude Code</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="Claude-Mem- 从入门到实践"><a href="#Claude-Mem- 从入门到实践" class="headerlink" title="Claude-Mem 从入门到实践"></a>Claude-Mem 从入门到实践</h1><blockquote>
+<p><strong>适用 claude-mem 版本</strong>：6.x</p>
+<p>Claude-Mem —— 一个让 AI 编程助手拥有”长期记忆”的开源插件。</p>
+</blockquote>
+<hr>
+<h2 id="目录"><a href="# 目录" class="headerlink" title="目录"></a>目录</h2><ul>
+<li><a href="#%E7%AC%AC1%E7%AB%A0-%E4%B8%BA%E4%BB%80%E4%B9%88%E9%9C%80%E8%A6%81-claude-mem">第 1 章 为什么需要 Claude-Mem</a></li>
+<li><a href="#%E7%AC%AC2%E7%AB%A0-%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86%E9%80%9F%E8%A7%88">第 2 章 工作原理速览</a></li>
+<li><a href="#%E7%AC%AC3%E7%AB%A0-%E7%8E%AF%E5%A2%83%E5%87%86%E5%A4%87">第 3 章 环境准备</a></li>
+<li><a href="#%E7%AC%AC4%E7%AB%A0-%E5%AE%89%E8%A3%85-claude-mem">第 4 章 安装 Claude-Mem</a></li>
+<li><a href="#%E7%AC%AC5%E7%AB%A0-%E5%9F%BA%E7%A1%80%E9%85%8D%E7%BD%AE">第 5 章 基础配置</a></li>
+<li><a href="#%E7%AC%AC6%E7%AB%A0-%E6%97%A5%E5%B8%B8%E4%BD%BF%E7%94%A8%E5%AE%9E%E6%88%98">第 6 章 日常使用实战</a></li>
+<li><a href="#%E7%AC%AC7%E7%AB%A0-%E8%BF%9B%E9%98%B6%E6%8A%80%E5%B7%A7">第 7 章 进阶技巧</a></li>
+<li><a href="#%E7%AC%AC8%E7%AB%A0-%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98%E4%B8%8E%E6%8E%92%E9%94%99">第 8 章 常见问题与排错</a></li>
+<li><a href="#%E9%99%84%E5%BD%95">附录</a></li>
+</ul>
+<hr>
+<h2 id="第 1 章 - 为什么需要 -Claude-Mem"><a href="# 第 1 章 - 为什么需要 -Claude-Mem" class="headerlink" title="第 1 章 为什么需要 Claude-Mem"></a>第 1 章 为什么需要 Claude-Mem</h2><h3 id="1-1- 你是否遇到过这个场景？"><a href="#1-1- 你是否遇到过这个场景？" class="headerlink" title="1.1 你是否遇到过这个场景？"></a>1.1 你是否遇到过这个场景？</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">Day 1:</span><br><span class="line">  你：&quot; 帮我用 React 搭一个待办事项应用，要支持拖拽排序和本地存储。&quot;</span><br><span class="line">  Claude：（完美地完成了任务，代码运行良好）</span><br><span class="line">  你：（开心地关闭了终端）</span><br><span class="line"></span><br><span class="line">Day 2:</span><br><span class="line">  你：&quot; 把昨天的待办应用加一个分类标签功能。&quot;</span><br><span class="line">  Claude：&quot; 请问你的项目使用什么框架？目录结构是怎样的？有哪些现有组件？&quot;</span><br><span class="line">  你：？？？昨天不是刚说完吗？</span><br></pre></td></tr></table></figure>
+
+<p>这就是 AI 编程助手的 **”失忆症”**：每次会话都是全新的，之前讨论过的架构决策、代码风格、项目结构全部丢失。你需要反复”喂背景”，浪费大量时间和 Token。</p>
+<h3 id="1-2-Claude-Mem- 是什么？"><a href="#1-2-Claude-Mem- 是什么？" class="headerlink" title="1.2 Claude-Mem 是什么？"></a>1.2 Claude-Mem 是什么？</h3><p><strong>Claude-Mem</strong> 是一个为 Claude Code（Anthropic 的命令行 AI 编程工具）设计的开源插件，它能：</p>
+<table>
+<thead>
+<tr>
+<th>功能</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>自动记忆</strong></td>
+<td>捕获 Claude 每一次工具调用（读文件、写代码、执行命令等）</td>
+</tr>
+<tr>
+<td><strong>智能压缩</strong></td>
+<td>用 AI 将海量操作记录压缩成精炼摘要</td>
+</tr>
+<tr>
+<td><strong>跨会话恢复</strong></td>
+<td>下次启动时自动注入相关历史上下文</td>
+</tr>
+<tr>
+<td><strong>语义搜索</strong></td>
+<td>用自然语言搜索过去的所有工作记录</td>
+</tr>
+</tbody></table>
+<h3 id="1-3- 核心价值"><a href="#1-3- 核心价值" class="headerlink" title="1.3 核心价值"></a>1.3 核心价值</h3><ul>
+<li><strong>零干预</strong>：安装后全自动工作，不需要手动操作</li>
+<li><strong>本地存储</strong>：所有数据存在你的电脑上（SQLite 数据库），不上传云端</li>
+<li><strong>Token 节省</strong>：通过”渐进式披露”机制，常规使用可节省约 90% 的 Token 消耗</li>
+<li><strong>隐私可控</strong>：支持 <code>&lt;private&gt;</code> 标签排除敏感内容</li>
+</ul>
+<hr>
+<h2 id="第 2 章 - 工作原理速览"><a href="# 第 2 章 - 工作原理速览" class="headerlink" title="第 2 章 工作原理速览"></a>第 2 章 工作原理速览</h2><blockquote>
+<p>这一章用最通俗的语言和图示，帮你理解 Claude-Mem 在幕后做了什么。不需要编程基础就能看懂。</p>
+</blockquote>
+<h3 id="2-1- 全景架构图"><a href="#2-1- 全景架构图" class="headerlink" title="2.1 全景架构图"></a>2.1 全景架构图</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">┌─────────────────────────────────────────────────────────────────┐</span><br><span class="line">│                     Claude-Mem 系统架构                          │</span><br><span class="line">│                                                                 │</span><br><span class="line">│  ┌──────────┐    ┌──────────────┐    ┌──────────────────────┐  │</span><br><span class="line">│  │ Claude   │    │ 5 个生命周期  │    │    Worker 服务        │  │</span><br><span class="line">│  │ Code     │◄──►│ Hooks        │◄──►│    (端口 37777)       │  │</span><br><span class="line">│  │ 会话     │    │              │    │                      │  │</span><br><span class="line">│  └──────────┘    │ · SessionStart│    │  ┌──────────────┐   │  │</span><br><span class="line">│                  │ · UserPrompt  │    │  │ SQLite 数据库 │   │  │</span><br><span class="line">│                  │ · PostToolUse │    │  │ (本地存储)    │   │  │</span><br><span class="line">│                  │ · Stop        │    │  └──────────────┘   │  │</span><br><span class="line">│                  │ · SessionEnd  │    │                      │  │</span><br><span class="line">│                  └──────────────┘    │  ┌──────────────┐   │  │</span><br><span class="line">│                                      │  │ AI 压缩引擎  │   │  │</span><br><span class="line">│                  ┌──────────────┐    │  │ (Agent SDK)  │   │  │</span><br><span class="line">│                  │ MCP 搜索工具  │    │  └──────────────┘   │  │</span><br><span class="line">│                  │ · search     │    │                      │  │</span><br><span class="line">│                  │ · timeline   │    │  ┌──────────────┐   │  │</span><br><span class="line">│                  │ · get_observations │ │ Web 查看器    │   │  │</span><br><span class="line">│                  └──────────────┘    │  │ localhost     │   │  │</span><br><span class="line">│                                      │  │ :37777        │   │  │</span><br><span class="line">│                                      │  └──────────────┘   │  │</span><br><span class="line">│                                      └──────────────────────┘  │</span><br><span class="line">└─────────────────────────────────────────────────────────────────┘</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-2- 数据流：从捕获到注入"><a href="#2-2- 数据流：从捕获到注入" class="headerlink" title="2.2 数据流：从捕获到注入"></a>2.2 数据流：从捕获到注入 </h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"> 会话中                             会话结束                        下次会话 </span><br><span class="line">────────                          ──────────                     ──────────</span><br><span class="line"></span><br><span class="line">Claude 使用工具                   自动生成摘要</span><br><span class="line">┌──────────┐                     ┌──────────┐</span><br><span class="line">│ Read     │                     │          │</span><br><span class="line">│ Write    │──► 捕获观察记录 ──► │ AI 压缩  │──► 存入 SQLite</span><br><span class="line">│ Edit     │    (观察)           │          │</span><br><span class="line">│ Bash     │                     └──────────┘</span><br><span class="line">│ Grep     │                          │</span><br><span class="line">└──────────┘                          │</span><br><span class="line">                                      ▼</span><br><span class="line"> 下次启动 Claude Code ◄── 智能检索 ◄── 索引 + 摘要</span><br><span class="line">(自动注入最近上下文)      (语义匹配)</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-3- 什么是”渐进式披露”？"><a href="#2-3- 什么是”渐进式披露”？" class="headerlink" title="2.3 什么是”渐进式披露”？"></a>2.3 什么是”渐进式披露”？</h3><p>想象你在图书馆查资料：</p>
+<ol>
+<li><strong>先看目录</strong>（<code>search</code>）：快速浏览有哪些相关记录，每条只显示标题和摘要</li>
+<li><strong>翻到相关章节</strong>（<code>timeline</code>）：查看某条记录前后的来龙去脉</li>
+<li><strong>精读具体页面</strong>（<code>get_observations</code>）：只在需要时才加载完整内容</li>
+</ol>
+<p>这种分层策略让你在常规使用下 <strong> 节省约 90% 的 Token 消耗</strong>，因为大部分查询在第一层就能找到答案，不需要加载完整内容。</p>
+<h3 id="2-4- 五个生命周期 -Hook"><a href="#2-4- 五个生命周期 -Hook" class="headerlink" title="2.4 五个生命周期 Hook"></a>2.4 五个生命周期 Hook</h3><table>
+<thead>
+<tr>
+<th>Hook</th>
+<th>触发时机</th>
+<th>做什么</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>SessionStart</strong></td>
+<td>新会话启动时</td>
+<td>从数据库检索最近上下文并注入</td>
+</tr>
+<tr>
+<td><strong>UserPromptSubmit</strong></td>
+<td>用户发送消息时</td>
+<td>捕获用户意图，优化检索策略</td>
+</tr>
+<tr>
+<td><strong>PostToolUse</strong></td>
+<td>Claude 每次使用工具后</td>
+<td>记录工具调用的详细信息</td>
+</tr>
+<tr>
+<td><strong>Stop</strong></td>
+<td>Claude 完成回复时</td>
+<td>生成会话摘要</td>
+</tr>
+<tr>
+<td><strong>SessionEnd</strong></td>
+<td>会话结束时</td>
+<td>清理资源，确保数据持久化</td>
+</tr>
+</tbody></table>
+<hr>
+<h2 id="第 3 章 - 环境准备"><a href="# 第 3 章 - 环境准备" class="headerlink" title="第 3 章 环境准备"></a>第 3 章 环境准备</h2><blockquote>
+<p>在安装 Claude-Mem 之前，你需要先确保系统已安装 Node.js 和 Claude Code。本章为三大平台分别提供详细步骤。</p>
+</blockquote>
+<h3 id="3-1- 什么是 -Node-js？"><a href="#3-1- 什么是 -Node-js？" class="headerlink" title="3.1 什么是 Node.js？"></a>3.1 什么是 Node.js？</h3><p>Node.js 是一个 JavaScript 运行环境，Claude Code 和 Claude-Mem 都依赖它运行。你可以把它理解为”Claude Code 的运行基础”。</p>
+<h3 id="3-2-Windows- 环境"><a href="#3-2-Windows- 环境" class="headerlink" title="3.2 Windows 环境"></a>3.2 Windows 环境 </h3><h4 id="步骤 -1：安装 -Node-js"><a href="# 步骤 -1：安装 -Node-js" class="headerlink" title="步骤 1：安装 Node.js"></a> 步骤 1：安装 Node.js</h4><ol>
+<li>访问 <a target="_blank" rel="noopener" href="https://nodejs.org/">https://nodejs.org</a></li>
+<li>下载 <strong>LTS（长期支持版）</strong> 安装包（<code>.msi</code> 文件）</li>
+<li>双击安装，** 一路点”Next”**，确保勾选了”Add to PATH”</li>
+<li>安装完成后，<strong>重新打开终端</strong>（这一步很重要！）</li>
+</ol>
+<p>验证安装：</p>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">node <span class="literal">--version</span></span><br><span class="line"><span class="comment"># 应该显示 v18.x.x 或更高版本</span></span><br><span class="line"></span><br><span class="line">npm <span class="literal">--version</span></span><br><span class="line"><span class="comment"># 应该显示版本号</span></span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p><strong>常见问题</strong>：如果提示 <code>npm 不是内部或外部命令</code>，说明 PATH 未生效。请重启电脑或重新打开终端。</p>
+</blockquote>
+<h4 id="步骤 -2：安装 -Claude-Code"><a href="# 步骤 -2：安装 -Claude-Code" class="headerlink" title="步骤 2：安装 Claude Code"></a>步骤 2：安装 Claude Code</h4><figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm install <span class="literal">-g</span> @anthropic<span class="literal">-ai</span>/claude<span class="literal">-code</span></span><br></pre></td></tr></table></figure>
+
+<p>验证：</p>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">claude <span class="literal">--version</span></span><br><span class="line"><span class="comment"># 显示版本号即可</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="步骤 -3：登录 -Claude-Code"><a href="# 步骤 -3：登录 -Claude-Code" class="headerlink" title="步骤 3：登录 Claude Code"></a>步骤 3：登录 Claude Code</h4><figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">claude login</span><br></pre></td></tr></table></figure>
+
+<p>按提示完成认证（使用 Anthropic 账号登录）。</p>
+<h4 id="步骤 -4：验证 -Claude-Code- 可用"><a href="# 步骤 -4：验证 -Claude-Code- 可用" class="headerlink" title="步骤 4：验证 Claude Code 可用"></a>步骤 4：验证 Claude Code 可用</h4><figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">claude</span><br></pre></td></tr></table></figure>
+
+<p>如果能进入交互模式（出现提示符），说明一切就绪。输入 <code>/exit</code> 退出。</p>
+<h3 id="3-3-macOS- 环境"><a href="#3-3-macOS- 环境" class="headerlink" title="3.3 macOS 环境"></a>3.3 macOS 环境 </h3><h4 id="步骤 -1：安装 -Node-js-1"><a href="# 步骤 -1：安装 -Node-js-1" class="headerlink" title="步骤 1：安装 Node.js"></a> 步骤 1：安装 Node.js</h4><p><strong>方式 A：使用 Homebrew（推荐）</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 如果没有 Homebrew，先安装它：</span></span><br><span class="line">/bin/bash -c <span class="string">&quot;<span class="subst">$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)</span>&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 安装 Node.js</span></span><br><span class="line">brew install node</span><br></pre></td></tr></table></figure>
+
+<p><strong>方式 B：官方安装包</strong></p>
+<ol>
+<li>访问 <a target="_blank" rel="noopener" href="https://nodejs.org/">https://nodejs.org</a></li>
+<li>下载 macOS LTS 安装包（<code>.pkg</code>）</li>
+<li>双击安装</li>
+</ol>
+<p>验证：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">node --version   <span class="comment"># v18.x.x 或更高</span></span><br><span class="line">npm --version    <span class="comment"># 显示版本号</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="步骤 -2：安装 -Claude-Code-1"><a href="# 步骤 -2：安装 -Claude-Code-1" class="headerlink" title="步骤 2：安装 Claude Code"></a>步骤 2：安装 Claude Code</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">npm install -g @anthropic-ai/claude-code</span><br><span class="line">claude login</span><br></pre></td></tr></table></figure>
+
+<h4 id="步骤 -3：验证"><a href="# 步骤 -3：验证" class="headerlink" title="步骤 3：验证"></a>步骤 3：验证</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">claude --version</span><br><span class="line">claude    <span class="comment"># 进入交互模式，/exit 退出</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="3-4-Linux- 环境"><a href="#3-4-Linux- 环境" class="headerlink" title="3.4 Linux 环境"></a>3.4 Linux 环境 </h3><h4 id="步骤 -1：安装 -Node-js-2"><a href="# 步骤 -1：安装 -Node-js-2" class="headerlink" title="步骤 1：安装 Node.js"></a> 步骤 1：安装 Node.js</h4><p><strong>Ubuntu &#x2F; Debian：</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 使用 NodeSource 仓库安装 Node.js 18+</span></span><br><span class="line">curl -fsSL https://deb.nodesource.com/setup_20.x | <span class="built_in">sudo</span> -E bash -</span><br><span class="line"><span class="built_in">sudo</span> apt-get install -y nodejs</span><br></pre></td></tr></table></figure>
+
+<p><strong>Fedora &#x2F; RHEL：</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> dnf install nodejs npm</span><br></pre></td></tr></table></figure>
+
+<p><strong>Arch Linux：</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> pacman -S nodejs npm</span><br></pre></td></tr></table></figure>
+
+<p>验证：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">node --version   <span class="comment"># v18.x.x 或更高</span></span><br><span class="line">npm --version</span><br></pre></td></tr></table></figure>
+
+<h4 id="步骤 -2：安装 -Claude-Code-2"><a href="# 步骤 -2：安装 -Claude-Code-2" class="headerlink" title="步骤 2：安装 Claude Code"></a>步骤 2：安装 Claude Code</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">npm install -g @anthropic-ai/claude-code</span><br><span class="line">claude login</span><br></pre></td></tr></table></figure>
+
+<h4 id="步骤 -3：验证 -1"><a href="# 步骤 -3：验证 -1" class="headerlink" title="步骤 3：验证"></a>步骤 3：验证</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">claude --version</span><br><span class="line">claude</span><br></pre></td></tr></table></figure>
+
+<h3 id="3-5- 环境准备检查清单"><a href="#3-5- 环境准备检查清单" class="headerlink" title="3.5 环境准备检查清单"></a>3.5 环境准备检查清单 </h3><p> 在继续下一章之前，请确认以下项目全部通过：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">node --version      <span class="comment"># ✅ v18.0.0 或更高</span></span><br><span class="line">npm --version       <span class="comment"># ✅ 显示版本号</span></span><br><span class="line">claude --version    <span class="comment"># ✅ 显示版本号</span></span><br><span class="line">claude              <span class="comment"># ✅ 能进入交互模式</span></span><br></pre></td></tr></table></figure>
+
+<p>全部通过？恭喜，环境准备完成！</p>
+<hr>
+<h2 id="第 4 章 - 安装 -Claude-Mem"><a href="# 第 4 章 - 安装 -Claude-Mem" class="headerlink" title="第 4 章 安装 Claude-Mem"></a>第 4 章 安装 Claude-Mem</h2><blockquote>
+<p>Claude-Mem 提供两种安装方式。推荐使用”插件市场”方式，最简单可靠。</p>
+</blockquote>
+<h3 id="4-1- 方式一：插件市场一键安装（推荐）"><a href="#4-1- 方式一：插件市场一键安装（推荐）" class="headerlink" title="4.1 方式一：插件市场一键安装（推荐）"></a>4.1 方式一：插件市场一键安装（推荐）</h3><p>这是最简单的方式，只需两条命令：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">步骤流程：</span><br><span class="line"></span><br><span class="line">启动 Claude Code</span><br><span class="line">       │</span><br><span class="line">       ▼</span><br><span class="line">  /plugin marketplace add thedotmack/claude-mem</span><br><span class="line">       │</span><br><span class="line">       ▼</span><br><span class="line">  /plugin install claude-mem</span><br><span class="line">       │</span><br><span class="line">       ▼</span><br><span class="line">  /exit（退出并重启 Claude Code）</span><br><span class="line">       │</span><br><span class="line">       ▼</span><br><span class="line">  ✅ 安装完成！</span><br></pre></td></tr></table></figure>
+
+<h4 id="详细步骤"><a href="# 详细步骤" class="headerlink" title="详细步骤"></a>详细步骤 </h4><p><strong> 第 1 步：启动 Claude Code</strong></p>
+<p>在终端中输入：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">claude</span><br></pre></td></tr></table></figure>
+
+<p><strong>第 2 步：添加插件市场来源</strong></p>
+<p>在 Claude Code 的交互环境中输入：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/plugin marketplace add thedotmack/claude-mem</span><br></pre></td></tr></table></figure>
+
+<p><strong>第 3 步：安装插件</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/plugin install claude-mem</span><br></pre></td></tr></table></figure>
+
+<p>安装过程会自动完成以下操作：</p>
+<ul>
+<li>下载预编译二进制文件（无需手动编译）</li>
+<li>安装依赖（包含 SQLite、Bun 等）</li>
+<li>配置生命周期 Hooks</li>
+<li>首次会话时自动启动 Worker 服务</li>
+</ul>
+<p><strong>第 4 步：重启 Claude Code</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/exit</span><br></pre></td></tr></table></figure>
+
+<p>然后重新启动：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">claude</span><br></pre></td></tr></table></figure>
+
+<h3 id="4-2- 方式二：npx- 命令安装"><a href="#4-2- 方式二：npx- 命令安装" class="headerlink" title="4.2 方式二：npx 命令安装"></a>4.2 方式二：npx 命令安装 </h3><p> 如果你更喜欢命令行操作：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npx claude-mem install</span><br></pre></td></tr></table></figure>
+
+<p>这条命令会自动完成所有配置。安装完成后重启 Claude Code 即可。</p>
+<blockquote>
+<p><strong>注意</strong>：不要使用 <code>npm install -g claude-mem</code>，这只会安装 SDK 库，不会注册插件 Hooks 和 Worker 服务。</p>
+</blockquote>
+<h3 id="4-3- 验证安装成功"><a href="#4-3- 验证安装成功" class="headerlink" title="4.3 验证安装成功"></a>4.3 验证安装成功 </h3><p> 重启 Claude Code 后，观察是否出现以下迹象：</p>
+<p><strong>迹象 1：启动时显示上下文注入</strong></p>
+<p>如果这不是你的第一次会话，启动时可能看到类似信息：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"># [UsageGuide] recent context, 2026-04-30 3:48pm GMT+8</span><br></pre></td></tr></table></figure>
+
+<p>这表示 Claude-Mem 正在注入历史上下文。</p>
+<p><strong>迹象 2：Web Viewer 可访问</strong></p>
+<p>打开浏览器访问：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://localhost:37777</span><br></pre></td></tr></table></figure>
+
+<p>如果能看到 Claude-Mem 的 Web 界面，说明 Worker 服务已正常启动。</p>
+<p><strong>迹象 3：检查数据目录</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Windows (PowerShell)</span></span><br><span class="line"><span class="built_in">ls</span> ~/.claude-mem/</span><br><span class="line"></span><br><span class="line"><span class="comment"># macOS / Linux</span></span><br><span class="line"><span class="built_in">ls</span> ~/.claude-mem/</span><br></pre></td></tr></table></figure>
+
+<p>如果看到以下文件 &#x2F; 目录，说明一切正常：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">claude-mem.db      # SQLite 数据库</span><br><span class="line">settings.json      # 配置文件</span><br><span class="line">logs/              # 日志目录</span><br></pre></td></tr></table></figure>
+
+<h3 id="4-4- 依赖项说明"><a href="#4-4- 依赖项说明" class="headerlink" title="4.4 依赖项说明"></a>4.4 依赖项说明</h3><p>Claude-Mem 会自动处理以下依赖，通常不需要你手动安装：</p>
+<table>
+<thead>
+<tr>
+<th>依赖</th>
+<th>用途</th>
+<th align="center">是否自动安装</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Node.js 18+</strong></td>
+<td>运行时环境</td>
+<td align="center">❌ 需手动安装（第 3 章）</td>
+</tr>
+<tr>
+<td><strong>Claude Code</strong></td>
+<td>AI 编程工具</td>
+<td align="center">❌ 需手动安装（第 3 章）</td>
+</tr>
+<tr>
+<td><strong>Bun</strong></td>
+<td>Worker 服务的 JavaScript 运行时</td>
+<td align="center">✅ 自动安装</td>
+</tr>
+<tr>
+<td><strong>uv</strong></td>
+<td>向量搜索的 Python 包管理器</td>
+<td align="center">✅ 自动安装</td>
+</tr>
+<tr>
+<td><strong>SQLite 3</strong></td>
+<td>本地数据存储</td>
+<td align="center">✅ 内置</td>
+</tr>
+</tbody></table>
+<hr>
+<h2 id="第 5 章 - 基础配置"><a href="# 第 5 章 - 基础配置" class="headerlink" title="第 5 章 基础配置"></a>第 5 章 基础配置</h2><blockquote>
+<p>Claude-Mem 开箱即用，默认配置已能满足大多数需求。本章介绍最常用的几项配置。</p>
+</blockquote>
+<h3 id="5-1- 配置文件位置"><a href="#5-1- 配置文件位置" class="headerlink" title="5.1 配置文件位置"></a>5.1 配置文件位置</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">~/.claude-mem/settings.json</span><br></pre></td></tr></table></figure>
+
+<table>
+<thead>
+<tr>
+<th>平台</th>
+<th>实际路径</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Windows</td>
+<td><code>C:\Users\ 你的用户名 \.claude-mem\settings.json</code></td>
+</tr>
+<tr>
+<td>macOS</td>
+<td><code>/Users/ 你的用户名 /.claude-mem/settings.json</code></td>
+</tr>
+<tr>
+<td>Linux</td>
+<td><code>/home/ 你的用户名 /.claude-mem/settings.json</code></td>
+</tr>
+</tbody></table>
+<p>该文件在首次运行时自动生成，包含默认值。</p>
+<h3 id="5-2- 中文模式设置"><a href="#5-2- 中文模式设置" class="headerlink" title="5.2 中文模式设置"></a>5.2 中文模式设置 </h3><p> 默认情况下，Claude-Mem 使用英文生成观察记录和摘要。如果你希望使用中文，需要修改模式设置。</p>
+<p>编辑 <code>~/.claude-mem/settings.json</code>：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;CLAUDE_MEM_MODE&quot;</span><span class="punctuation">:</span> <span class="string">&quot;code--zh&quot;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>可用的语言模式</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>模式</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>code</code></td>
+<td>默认英文模式</td>
+</tr>
+<tr>
+<td><code>code--zh</code></td>
+<td>简体中文模式</td>
+</tr>
+<tr>
+<td><code>code--ja</code></td>
+<td>日语模式</td>
+</tr>
+</tbody></table>
+<p>其他语言模式遵循 <code>code--[语言代码]</code> 格式，其中语言代码为 ISO 639-1 标准（如 <code>es</code> 西班牙语、<code>ko</code> 韩语）。</p>
+<blockquote>
+<p><strong>修改后需要重启 Claude Code 才能生效。</strong></p>
+</blockquote>
+<h3 id="5-3- 自定义数据目录"><a href="#5-3- 自定义数据目录" class="headerlink" title="5.3 自定义数据目录"></a>5.3 自定义数据目录 </h3><p> 如果你想把数据存到特定位置（比如 SSD 硬盘或为不同项目隔离记忆），可以设置环境变量：</p>
+<p><strong>Windows（PowerShell）：</strong></p>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">$env:CLAUDE_MEM_DATA_DIR</span>=<span class="string">&quot;D:\claude-mem-data&quot;</span></span><br><span class="line">claude</span><br></pre></td></tr></table></figure>
+
+<p><strong>macOS &#x2F; Linux：</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">export</span> CLAUDE_MEM_DATA_DIR=/data/claude-mem-data</span><br><span class="line">claude</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>如果想永久生效，将环境变量添加到你的 shell 配置文件（如 <code>.bashrc</code>、<code>.zshrc</code>）或 Windows 系统环境变量中。</p>
+</blockquote>
+<h3 id="5-4-Worker- 服务管理"><a href="#5-4-Worker- 服务管理" class="headerlink" title="5.4 Worker 服务管理"></a>5.4 Worker 服务管理</h3><p>Worker 服务是 Claude-Mem 的后台引擎，处理数据存储和 AI 压缩。通常它会自动启动和管理，但有时你可能需要手动操作：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 进入 claude-mem 安装目录</span></span><br><span class="line"><span class="built_in">cd</span> ~/.claude/plugins/marketplaces/thedotmack</span><br><span class="line"></span><br><span class="line"><span class="comment"># 常用管理命令</span></span><br><span class="line">npm run worker:start      <span class="comment"># 启动 Worker</span></span><br><span class="line">npm run worker:stop       <span class="comment"># 停止 Worker</span></span><br><span class="line">npm run worker:status     <span class="comment"># 查看运行状态</span></span><br><span class="line">npm run worker:logs       <span class="comment"># 查看日志（排查问题时很有用）</span></span><br><span class="line">npm run worker:restart    <span class="comment"># 重启 Worker</span></span><br><span class="line">npm run worker:<span class="built_in">kill</span>       <span class="comment"># 强制终止（仅在卡死时使用）</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="5-5- 配置速查"><a href="#5-5- 配置速查" class="headerlink" title="5.5 配置速查"></a>5.5 配置速查</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">~/.claude-mem/</span><br><span class="line">├── settings.json         ← 主配置文件（编辑此文件）</span><br><span class="line">├── claude-mem.db         ← SQLite 数据库（不要手动删除！）</span><br><span class="line">├── .worker.pid           ← Worker 进程 ID（自动管理）</span><br><span class="line">├── .worker.port          ← Worker 端口（默认 37777）</span><br><span class="line">└── logs/</span><br><span class="line">    └── worker-YYYY-MM-DD.log  ← 每日日志文件</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="第 6 章 - 日常使用实战"><a href="# 第 6 章 - 日常使用实战" class="headerlink" title="第 6 章 日常使用实战"></a>第 6 章 日常使用实战</h2><blockquote>
+<p>本章通过一个完整的实战案例，演示 Claude-Mem 如何在日常开发中发挥作用。</p>
+</blockquote>
+<h3 id="6-1- 最佳实践：完全当它不存在"><a href="#6-1- 最佳实践：完全当它不存在" class="headerlink" title="6.1 最佳实践：完全当它不存在"></a>6.1 最佳实践：完全当它不存在 </h3><p>Claude-Mem 的设计理念是<strong> 零干预</strong>——你只需要正常使用 Claude Code 编码，记忆系统在后台自动工作。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">你的日常工作流（和没装 Claude-Mem 完全一样）：</span><br><span class="line"></span><br><span class="line">  1. 启动 claude</span><br><span class="line">  2. 告诉 Claude 你要做什么</span><br><span class="line">  3. Claude 读文件、写代码、跑测试……</span><br><span class="line">  4. Claude-Mem 自动记录每一步</span><br><span class="line">  5. 会话结束，Claude-Mem 自动生成摘要</span><br><span class="line">  6. 下次启动，自动恢复上下文</span><br></pre></td></tr></table></figure>
+
+<h3 id="6-2- 实战案例：跨会话项目开发"><a href="#6-2- 实战案例：跨会话项目开发" class="headerlink" title="6.2 实战案例：跨会话项目开发"></a>6.2 实战案例：跨会话项目开发 </h3><p> 下面演示一个完整的多日开发场景，展示 Claude-Mem 如何在会话间保持记忆连续性。</p>
+<hr>
+<h4 id="Day-1：搭建项目基础"><a href="#Day-1：搭建项目基础" class="headerlink" title="Day 1：搭建项目基础"></a>Day 1：搭建项目基础 </h4><p> 启动 Claude Code：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> ~/projects</span><br><span class="line"><span class="built_in">mkdir</span> my-task-app &amp;&amp; <span class="built_in">cd</span> my-task-app</span><br><span class="line">claude</span><br></pre></td></tr></table></figure>
+
+<p>与 Claude 的对话：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">你：帮我创建一个简单的 Node.js 命令行任务管理工具。支持添加任务、列出任务、</span><br><span class="line">    标记完成这三个功能。数据存储在 JSON 文件中。</span><br><span class="line"></span><br><span class="line">Claude：[开始创建项目……]</span><br><span class="line">        - 创建 package.json</span><br><span class="line">        - 创建 src/task-manager.js</span><br><span class="line">        - 创建 src/storage.js</span><br><span class="line">        - 创建 index.js</span><br><span class="line">        - 编写测试……</span><br><span class="line"></span><br><span class="line">你：测试都通过了吗？</span><br><span class="line"></span><br><span class="line">Claude：是的，3 个测试套件全部通过。</span><br></pre></td></tr></table></figure>
+
+<p>此时 Claude-Mem 已经在后台自动记录了：</p>
+<ul>
+<li>你创建的项目类型和技术栈</li>
+<li>Claude 读取和创建了哪些文件</li>
+<li>测试结果和关键决策</li>
+</ul>
+<p><strong>关闭会话：</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">你：今天就到这里，明天继续。</span><br><span class="line">Claude：好的，明天见！</span><br><span class="line">/exit</span><br></pre></td></tr></table></figure>
+
+<p>Claude-Mem 自动生成 Day 1 的会话摘要：</p>
+<blockquote>
+<p>会话摘要：创建了 Node.js 命令行任务管理工具，支持添加、列出、标记完成功能，<br>数据存储在 JSON 文件中。包含 task-manager.js、storage.js、index.js，<br>3 个测试套件全部通过。</p>
+</blockquote>
+<hr>
+<h4 id="Day-2：跨会话恢复"><a href="#Day-2：跨会话恢复" class="headerlink" title="Day 2：跨会话恢复"></a>Day 2：跨会话恢复 </h4><p> 第二天，启动新会话：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> ~/projects/my-task-app</span><br><span class="line">claude</span><br></pre></td></tr></table></figure>
+
+<p>Claude-Mem 自动注入 Day 1 的上下文，Claude 已经”记得”你的项目。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">你：继续昨天的项目，加一个删除任务的功能，然后给每个任务加上创建时间。</span><br><span class="line"></span><br><span class="line">Claude：（不需要你重新解释项目结构，直接开始工作）</span><br><span class="line">        我记得昨天我们创建了一个 Node.js 任务管理工具，使用 JSON 存储。</span><br><span class="line">        现在来添加删除功能和创建时间……</span><br><span class="line"></span><br><span class="line">        - 修改 src/task-manager.js，添加 deleteTask 方法 </span><br><span class="line">        - 修改 task 对象结构，增加 createdAt 字段</span><br><span class="line">        - 更新测试……</span><br><span class="line"></span><br><span class="line"> 你：帮我检查一下昨天写的代码有没有潜在问题。</span><br><span class="line"></span><br><span class="line">Claude：（基于记忆中的上下文进行分析）</span><br><span class="line">        我注意到 storage.js 的写入操作没有错误处理……</span><br></pre></td></tr></table></figure>
+
+<p><strong>关键点</strong>：你完全不需要重复说明项目背景。Claude-Mem 让 Claude 在新会话中”记住”了：</p>
+<ul>
+<li>项目的技术栈（Node.js + JSON 存储）</li>
+<li>项目结构（哪些文件、各文件职责）</li>
+<li>已完成的功能（添加、列出、标记完成）</li>
+<li>测试状态（全部通过）</li>
+</ul>
+<hr>
+<h4 id="Day-3：主动搜索历史记忆"><a href="#Day-3：主动搜索历史记忆" class="headerlink" title="Day 3：主动搜索历史记忆"></a>Day 3：主动搜索历史记忆</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> ~/projects/my-task-app</span><br><span class="line">claude</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">你：我们之前在讨论 storage.js 时遇到过什么问题吗？</span><br><span class="line"></span><br><span class="line">Claude：（通过 mem-search 技能搜索历史记忆）</span><br><span class="line">        在 Day 2 的会话中，我们发现 storage.js 的写入操作缺少错误处理，</span><br><span class="line">        后来添加了 try-catch 和文件权限检查……</span><br><span class="line"></span><br><span class="line">你：把这几天的改动整理成一个 CHANGELOG。</span><br><span class="line"></span><br><span class="line">Claude：（检索所有历史记录，生成完整的变更日志）</span><br></pre></td></tr></table></figure>
+
+<h3 id="6-3-Web-Viewer：可视化查看记忆"><a href="#6-3-Web-Viewer：可视化查看记忆" class="headerlink" title="6.3 Web Viewer：可视化查看记忆"></a>6.3 Web Viewer：可视化查看记忆</h3><p>Claude-Mem 提供了一个 Web 界面，让你可以直观地查看所有记忆记录。</p>
+<p>打开浏览器访问：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://localhost:37777</span><br></pre></td></tr></table></figure>
+
+<p>你能看到：</p>
+<table>
+<thead>
+<tr>
+<th>功能</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>记忆流</strong></td>
+<td>按时间线查看所有观察记录</td>
+</tr>
+<tr>
+<td><strong>搜索</strong></td>
+<td>用关键词搜索历史记录</td>
+</tr>
+<tr>
+<td><strong>设置</strong></td>
+<td>切换稳定版 &#x2F;Beta 版、调整配置</td>
+</tr>
+<tr>
+<td><strong>观察详情</strong></td>
+<td>点击任意记录查看完整内容</td>
+</tr>
+</tbody></table>
+<p>每条观察记录都有一个唯一 ID，你可以通过以下方式访问特定记录：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://localhost:37777/api/observation/&#123;ID&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="6-4- 隐私控制"><a href="#6-4- 隐私控制" class="headerlink" title="6.4 隐私控制"></a>6.4 隐私控制 </h3><p> 如果你不希望某些敏感内容被记录，可以在对话中使用 <code>&lt;private&gt;</code> 标签：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">你：数据库密码是 &lt;private&gt;my-secret-password-123&lt;/private&gt;，</span><br><span class="line">    帮我配置数据库连接。</span><br><span class="line"></span><br><span class="line">Claude：（正常工作，但密码不会被 Claude-Mem 记录）</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="第 7 章 - 进阶技巧"><a href="# 第 7 章 - 进阶技巧" class="headerlink" title="第 7 章 进阶技巧"></a>第 7 章 进阶技巧</h2><blockquote>
+<p>掌握了基础用法后，本章介绍 Claude-Mem 的高级搜索和知识库功能。</p>
+</blockquote>
+<h3 id="7-1-MCP- 搜索工具：三层工作流"><a href="#7-1-MCP- 搜索工具：三层工作流" class="headerlink" title="7.1 MCP 搜索工具：三层工作流"></a>7.1 MCP 搜索工具：三层工作流</h3><p>Claude-Mem 提供了 3 个 MCP 搜索工具，遵循 **”先索引、后详情”** 的三层工作流，大幅节省 Token。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">三层工作流：</span><br><span class="line"></span><br><span class="line">第 1 层：search（搜索索引）</span><br><span class="line">  输入：&quot; 认证相关的 bug 修复 &quot;</span><br><span class="line">  输出：~10 条结果，每条约 50-100 Token（只有标题和摘要）</span><br><span class="line">  ──────────────────────────────────────────</span><br><span class="line">  ID #123 | 修复了 JWT token 过期处理的问题 </span><br><span class="line">  ID #124 | 添加了 refresh token 逻辑</span><br><span class="line">  ID #125 | 重构了认证中间件</span><br><span class="line">                    │</span><br><span class="line">                    ▼  选择相关的 ID</span><br><span class="line"></span><br><span class="line"> 第 2 层：timeline（时间线上下文）</span><br><span class="line">  输入：anchor=#124</span><br><span class="line">  输出：#124 前后的来龙去脉（上下文）</span><br><span class="line">                    │</span><br><span class="line">                    ▼  确认需要查看的 ID</span><br><span class="line"></span><br><span class="line">第 3 层：get_observations（完整详情）</span><br><span class="line">  输入：ids=[123, 124]</span><br><span class="line">  输出：完整的观察记录（每条 500-1000 Token）</span><br></pre></td></tr></table></figure>
+
+<h4 id="使用示例"><a href="# 使用示例" class="headerlink" title="使用示例"></a>使用示例 </h4><p> 在 Claude Code 中，你可以直接用自然语言触发搜索，Claude 会自动调用 MCP 工具：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">你：我们之前修复过一个 JWT 认证的 bug，能帮我找到吗？</span><br><span class="line"></span><br><span class="line">Claude：（自动调用 search 工具）</span><br><span class="line">        我找到了以下相关记录：</span><br><span class="line">        - #123 修复了 JWT token 过期处理 </span><br><span class="line">        - #124 添加了 refresh token 逻辑</span><br><span class="line"></span><br><span class="line"> 你：#123 具体改了什么？</span><br><span class="line"></span><br><span class="line">Claude：（自动调用 get_observations 工具）</span><br><span class="line">        在 #123 中，我们修改了 auth/middleware.js 的第 45-52 行……</span><br></pre></td></tr></table></figure>
+
+<h4 id="手动使用搜索工具"><a href="# 手动使用搜索工具" class="headerlink" title="手动使用搜索工具"></a>手动使用搜索工具 </h4><p> 如果你想要更精确的控制，可以使用 <code>/mem-search</code> 技能：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">你：/mem-search</span><br><span class="line"></span><br><span class="line">（Claude 将启动 mem-search 技能，提供结构化的搜索界面）</span><br></pre></td></tr></table></figure>
+
+<h4 id="搜索参数"><a href="# 搜索参数" class="headerlink" title="搜索参数"></a>搜索参数</h4><p><code>search</code> 工具支持的筛选条件：</p>
+<table>
+<thead>
+<tr>
+<th>参数</th>
+<th>说明</th>
+<th>示例</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>query</code></td>
+<td>搜索关键词</td>
+<td><code>&quot;authentication bug&quot;</code></td>
+</tr>
+<tr>
+<td><code>type</code></td>
+<td>记录类型</td>
+<td><code>decision</code>、<code>bugfix</code>、<code>feature</code>、<code>refactor</code></td>
+</tr>
+<tr>
+<td><code>project</code></td>
+<td>项目名称</td>
+<td><code>&quot;my-task-app&quot;</code></td>
+</tr>
+<tr>
+<td><code>dateStart</code></td>
+<td>起始日期</td>
+<td><code>&quot;2026-04-01&quot;</code></td>
+</tr>
+<tr>
+<td><code>dateEnd</code></td>
+<td>结束日期</td>
+<td><code>&quot;2026-04-30&quot;</code></td>
+</tr>
+<tr>
+<td><code>limit</code></td>
+<td>结果数量</td>
+<td><code>10</code>（默认 20）</td>
+</tr>
+</tbody></table>
+<h3 id="7-2- 知识库：从记忆到知识"><a href="#7-2- 知识库：从记忆到知识" class="headerlink" title="7.2 知识库：从记忆到知识"></a>7.2 知识库：从记忆到知识</h3><p>Claude-Mem 的知识库功能可以将散落的观察记录组织成可查询的知识集合。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">记忆 ──────► 知识库 ──────► 智能问答</span><br><span class="line"></span><br><span class="line">(散落的观察)   (结构化知识)    (自然语言查询)</span><br></pre></td></tr></table></figure>
+
+<h4 id="创建知识库"><a href="# 创建知识库" class="headerlink" title="创建知识库"></a>创建知识库 </h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"> 你：帮我构建一个关于 &quot; 认证系统 &quot; 的知识库。</span><br><span class="line"></span><br><span class="line">Claude：（调用 build_corpus 工具）</span><br><span class="line">        已创建知识库 &quot;auth-system&quot;，包含 23 条相关观察记录。</span><br></pre></td></tr></table></figure>
+
+<p>实际上，Claude 会调用以下工具：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">build_corpus(</span><br><span class="line">  name=&quot;auth-system&quot;,</span><br><span class="line">  description=&quot; 认证系统相关知识 &quot;,</span><br><span class="line">  query=&quot;authentication JWT token&quot;,</span><br><span class="line">  types=&quot;decision,bugfix,feature&quot;</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+<h4 id="查询知识库"><a href="# 查询知识库" class="headerlink" title="查询知识库"></a>查询知识库 </h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"> 你：我们的认证系统支持哪些登录方式？</span><br><span class="line"></span><br><span class="line">Claude：（先调用 prime_corpus 加载知识库，再调用 query_corpus 查询）</span><br><span class="line">        根据知识库记录，我们目前支持：</span><br><span class="line">        1. 用户名 / 密码登录</span><br><span class="line">        2. JWT Token 认证</span><br><span class="line">        3. Refresh Token 自动续期</span><br></pre></td></tr></table></figure>
+
+<h4 id="知识库管理命令"><a href="# 知识库管理命令" class="headerlink" title="知识库管理命令"></a>知识库管理命令</h4><table>
+<thead>
+<tr>
+<th>命令</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>build_corpus</code></td>
+<td>创建新知识库</td>
+</tr>
+<tr>
+<td><code>list_corpora</code></td>
+<td>列出所有知识库</td>
+</tr>
+<tr>
+<td><code>prime_corpus</code></td>
+<td>加载知识库（查询前必须先加载）</td>
+</tr>
+<tr>
+<td><code>query_corpus</code></td>
+<td>向知识库提问</td>
+</tr>
+<tr>
+<td><code>rebuild_corpus</code></td>
+<td>重建知识库（刷新内容）</td>
+</tr>
+<tr>
+<td><code>reprime_corpus</code></td>
+<td>重置知识库会话（清除对话历史）</td>
+</tr>
+</tbody></table>
+<h3 id="7-3- 智能代码分析工具"><a href="#7-3- 智能代码分析工具" class="headerlink" title="7.3 智能代码分析工具"></a>7.3 智能代码分析工具</h3><p>Claude-Mem 还提供了基于 AST（抽象语法树）的代码分析工具，比全文件读取更高效：</p>
+<table>
+<thead>
+<tr>
+<th>工具</th>
+<th>说明</th>
+<th>适用场景</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>smart_outline</code></td>
+<td>查看文件的函数 &#x2F; 类 &#x2F; 方法结构</td>
+<td>快速了解文件内容</td>
+</tr>
+<tr>
+<td><code>smart_search</code></td>
+<td>搜索代码中的符号（函数名、类名等）</td>
+<td>查找特定函数的位置</td>
+</tr>
+<tr>
+<td><code>smart_unfold</code></td>
+<td>展开特定符号的完整代码</td>
+<td>只看某个函数的实现</td>
+</tr>
+</tbody></table>
+<h3 id="7-4- 实用技能（Skills）"><a href="#7-4- 实用技能（Skills）" class="headerlink" title="7.4 实用技能（Skills）"></a>7.4 实用技能（Skills）</h3><p>Claude-Mem 安装后会在 Claude Code 中注册以下技能：</p>
+<table>
+<thead>
+<tr>
+<th>技能</th>
+<th>触发方式</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>/mem-search</code></td>
+<td>手动触发</td>
+<td>搜索持久化记忆</td>
+</tr>
+<tr>
+<td><code>/make-plan</code></td>
+<td>手动触发</td>
+<td>创建详细的实施计划</td>
+</tr>
+<tr>
+<td><code>/do</code></td>
+<td>手动触发</td>
+<td>执行已有的实施计划</td>
+</tr>
+<tr>
+<td><code>/knowledge-agent</code></td>
+<td>手动触发</td>
+<td>构建和查询知识库</td>
+</tr>
+<tr>
+<td><code>/smart-explore</code></td>
+<td>手动触发</td>
+<td>Token 优化的结构化代码搜索</td>
+</tr>
+<tr>
+<td><code>/pathfinder</code></td>
+<td>手动触发</td>
+<td>生成代码库的功能分组流程图</td>
+</tr>
+<tr>
+<td><code>/timeline-report</code></td>
+<td>手动触发</td>
+<td>生成项目开发历程报告</td>
+</tr>
+</tbody></table>
+<h3 id="7-5-Beta- 功能：Endless-Mode"><a href="#7-5-Beta- 功能：Endless-Mode" class="headerlink" title="7.5 Beta 功能：Endless Mode"></a>7.5 Beta 功能：Endless Mode</h3><p>Claude-Mem 提供了 Beta 频道，包含实验性功能如 <strong>Endless Mode（无尽模式）</strong>——一种仿生记忆架构，支持超长会话。</p>
+<p><strong>开启方法</strong>：</p>
+<ol>
+<li>访问 Web Viewer：<code>http://localhost:37777</code></li>
+<li>进入 Settings 页面</li>
+<li>切换到 Beta 版本</li>
+</ol>
+<blockquote>
+<p><strong>注意</strong>：Beta 功能可能不稳定，建议在非关键项目中试用。</p>
+</blockquote>
+<hr>
+<h2 id="第 8 章 - 常见问题与排错"><a href="# 第 8 章 - 常见问题与排错" class="headerlink" title="第 8 章 常见问题与排错"></a>第 8 章 常见问题与排错</h2><h3 id="8-1-FAQ- 速查表"><a href="#8-1-FAQ- 速查表" class="headerlink" title="8.1 FAQ 速查表"></a>8.1 FAQ 速查表</h3><table>
+<thead>
+<tr>
+<th>问题</th>
+<th>原因</th>
+<th>解决方案</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>npm 不是内部或外部命令</code></td>
+<td>Node.js 未安装或 PATH 未配置</td>
+<td>重新安装 Node.js，确保勾选”Add to PATH”，重启终端</td>
+</tr>
+<tr>
+<td>安装时网络超时</td>
+<td>npm 下载慢</td>
+<td>设置国内镜像：<code>npm config set registry https://registry.npmmirror.com</code></td>
+</tr>
+<tr>
+<td>Worker 启动失败</td>
+<td>端口 37777 被占用</td>
+<td>终止占用进程或修改端口配置</td>
+</tr>
+<tr>
+<td>记忆未被注入</td>
+<td>Worker 未运行</td>
+<td>手动启动：<code>cd ~/.claude/plugins/marketplaces/thedotmack &amp;&amp; npm run worker:start</code></td>
+</tr>
+<tr>
+<td>Web Viewer 无法访问</td>
+<td>Worker 未启动或端口错误</td>
+<td>检查 <code>~/.claude-mem/.worker.port</code> 文件中的实际端口</td>
+</tr>
+<tr>
+<td>中文模式下仍显示英文</td>
+<td>修改后未重启</td>
+<td>修改 <code>settings.json</code> 后必须重启 Claude Code</td>
+</tr>
+<tr>
+<td><code>Bun</code> 安装失败</td>
+<td>网络问题或权限不足</td>
+<td>手动安装 Bun：<code>powershell -c &quot;irm bun.sh/install.ps1 | iex&quot;</code>（Windows）</td>
+</tr>
+<tr>
+<td>向量搜索不工作</td>
+<td><code>uv</code> 未安装</td>
+<td>Claude-Mem 会自动安装，检查网络连接后重试</td>
+</tr>
+</tbody></table>
+<h3 id="8-2- 详细排查步骤"><a href="#8-2- 详细排查步骤" class="headerlink" title="8.2 详细排查步骤"></a>8.2 详细排查步骤 </h3><h4 id="问题：安装后看不到任何效果"><a href="# 问题：安装后看不到任何效果" class="headerlink" title="问题：安装后看不到任何效果"></a> 问题：安装后看不到任何效果 </h4><p><strong> 排查步骤</strong>：</p>
+<ol>
+<li><p><strong>确认安装成功</strong>：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">ls</span> ~/.claude/plugins/marketplaces/thedotmack/</span><br><span class="line"><span class="comment"># 应该能看到插件文件</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>确认 Worker 正在运行</strong>：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">curl http://localhost:37777/api/health</span><br><span class="line"><span class="comment"># 应该返回 &#123;&quot;status&quot;:&quot;ok&quot;&#125; 或类似响应</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>查看日志</strong>：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cat</span> ~/.claude-mem/logs/worker-$(<span class="built_in">date</span> +%Y-%m-%d).<span class="built_in">log</span></span><br><span class="line"><span class="comment"># 查看是否有错误信息</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>尝试手动启动 Worker</strong>：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> ~/.claude/plugins/marketplaces/thedotmack</span><br><span class="line">npm run worker:start</span><br></pre></td></tr></table></figure></li>
+</ol>
+<h4 id="问题：Windows- 上路径相关错误"><a href="# 问题：Windows- 上路径相关错误" class="headerlink" title="问题：Windows 上路径相关错误"></a>问题：Windows 上路径相关错误</h4><p>Windows 用户可能遇到路径分隔符问题（<code>\</code> vs <code>/</code>）。建议：</p>
+<ul>
+<li>在 PowerShell 中使用反引号（<code>`</code>）转义路径</li>
+<li>确保用户目录路径中没有中文字符</li>
+<li>使用完整路径而非相对路径</li>
+</ul>
+<h4 id="问题：如何完全卸载"><a href="# 问题：如何完全卸载" class="headerlink" title="问题：如何完全卸载"></a>问题：如何完全卸载</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 1. 卸载插件（在 Claude Code 中）</span></span><br><span class="line">/plugin uninstall claude-mem</span><br><span class="line"></span><br><span class="line"><span class="comment"># 2. 删除所有记忆数据（谨慎！会删除所有历史记录）</span></span><br><span class="line"><span class="built_in">rm</span> -rf ~/.claude-mem</span><br><span class="line"></span><br><span class="line"><span class="comment"># 3. 删除插件文件</span></span><br><span class="line"><span class="built_in">rm</span> -rf ~/.claude/plugins/marketplaces/thedotmack</span><br></pre></td></tr></table></figure>
+
+<h3 id="8-3- 获取帮助"><a href="#8-3- 获取帮助" class="headerlink" title="8.3 获取帮助"></a>8.3 获取帮助 </h3><p> 如果以上方法都无法解决你的问题：</p>
+<ol>
+<li><p><strong>向 Claude 描述问题</strong>：Claude-Mem 内置了 troubleshoot 技能，描述问题后 Claude 会自动诊断</p>
+</li>
+<li><p><strong>生成 Bug 报告</strong>：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> ~/.claude/plugins/marketplaces/thedotmack</span><br><span class="line">npm run bug-report</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>提交 Issue</strong>：<a target="_blank" rel="noopener" href="https://github.com/thedotmack/claude-mem/issues">GitHub Issues</a></p>
+</li>
+<li><p><strong>加入社区</strong>：<a target="_blank" rel="noopener" href="https://discord.gg/claude-mem">Discord</a></p>
+</li>
+</ol>
+<hr>
+<h2 id="附录"><a href="# 附录" class="headerlink" title="附录"></a>附录 </h2><h3 id="A- 命令速查表"><a href="#A- 命令速查表" class="headerlink" title="A. 命令速查表"></a>A. 命令速查表</h3><h4 id="安装与管理"><a href="# 安装与管理" class="headerlink" title="安装与管理"></a> 安装与管理</h4><table>
+<thead>
+<tr>
+<th>命令</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>/plugin marketplace add thedotmack/claude-mem</code></td>
+<td>添加插件市场来源</td>
+</tr>
+<tr>
+<td><code>/plugin install claude-mem</code></td>
+<td>安装插件</td>
+</tr>
+<tr>
+<td><code>/plugin uninstall claude-mem</code></td>
+<td>卸载插件</td>
+</tr>
+<tr>
+<td><code>npx claude-mem install</code></td>
+<td>命令行方式安装</td>
+</tr>
+</tbody></table>
+<h4 id="Worker- 管理"><a href="#Worker- 管理" class="headerlink" title="Worker 管理"></a>Worker 管理</h4><table>
+<thead>
+<tr>
+<th>命令</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>npm run worker:start</code></td>
+<td>启动 Worker 服务</td>
+</tr>
+<tr>
+<td><code>npm run worker:stop</code></td>
+<td>停止 Worker 服务</td>
+</tr>
+<tr>
+<td><code>npm run worker:status</code></td>
+<td>查看运行状态</td>
+</tr>
+<tr>
+<td><code>npm run worker:logs</code></td>
+<td>查看日志</td>
+</tr>
+<tr>
+<td><code>npm run worker:restart</code></td>
+<td>重启 Worker 服务</td>
+</tr>
+<tr>
+<td><code>npm run worker:kill</code></td>
+<td>强制终止 Worker</td>
+</tr>
+</tbody></table>
+<h4 id="日常操作"><a href="# 日常操作" class="headerlink" title="日常操作"></a>日常操作</h4><table>
+<thead>
+<tr>
+<th>命令 &#x2F; 操作</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>正常使用 Claude Code</td>
+<td>Claude-Mem 自动记录一切</td>
+</tr>
+<tr>
+<td><code>http://localhost:37777</code></td>
+<td>打开 Web Viewer</td>
+</tr>
+<tr>
+<td><code>&lt;private&gt;...&lt;/private&gt;</code></td>
+<td>标记隐私内容，不被记录</td>
+</tr>
+<tr>
+<td><code>/mem-search</code></td>
+<td>手动触发记忆搜索</td>
+</tr>
+</tbody></table>
+<h3 id="B- 配置项参考"><a href="#B- 配置项参考" class="headerlink" title="B. 配置项参考"></a>B. 配置项参考</h3><p><code>~/.claude-mem/settings.json</code> 中的主要配置项：</p>
+<table>
+<thead>
+<tr>
+<th>配置项</th>
+<th>默认值</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>CLAUDE_MEM_MODE</code></td>
+<td><code>&quot;code&quot;</code></td>
+<td>工作模式和语言（中文用 <code>&quot;code--zh&quot;</code>）</td>
+</tr>
+<tr>
+<td><code>CLAUDE_MEM_DATA_DIR</code></td>
+<td><code>~/.claude-mem/</code></td>
+<td>数据存储目录</td>
+</tr>
+<tr>
+<td>Worker 端口</td>
+<td><code>37777</code></td>
+<td>Worker 服务监听端口</td>
+</tr>
+</tbody></table>
+<p>环境变量：</p>
+<table>
+<thead>
+<tr>
+<th>变量</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>CLAUDE_MEM_DATA_DIR</code></td>
+<td>自定义数据目录</td>
+</tr>
+<tr>
+<td><code>CLAUDE_MEM_MODE</code></td>
+<td>工作模式</td>
+</tr>
+</tbody></table>
+<h3 id="C- 参考资源"><a href="#C- 参考资源" class="headerlink" title="C. 参考资源"></a>C. 参考资源</h3><table>
+<thead>
+<tr>
+<th>资源</th>
+<th>链接</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>GitHub 仓库</td>
+<td><a target="_blank" rel="noopener" href="https://github.com/thedotmack/claude-mem">github.com&#x2F;thedotmack&#x2F;claude-mem</a></td>
+</tr>
+<tr>
+<td>官方文档</td>
+<td><a target="_blank" rel="noopener" href="https://github.com/thedotmack/claude-mem#documentation">GitHub README 中的文档链接</a></td>
+</tr>
+<tr>
+<td>Claude Code 官方</td>
+<td><a target="_blank" rel="noopener" href="https://docs.anthropic.com/">docs.anthropic.com</a></td>
+</tr>
+<tr>
+<td>Bug 报告</td>
+<td>[GitHub Issues</td>
+</tr>
+</tbody></table>
+<h3 id="D- 卸载与重新安装"><a href="#D- 卸载与重新安装" class="headerlink" title="D. 卸载与重新安装"></a>D. 卸载与重新安装 </h3><p> 如果遇到无法解决的问题，可以尝试完全重新安装：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 第 1 步：卸载插件（在 Claude Code 中执行）</span></span><br><span class="line">/plugin uninstall claude-mem</span><br><span class="line"></span><br><span class="line"><span class="comment"># 第 2 步：清理数据（可选，会删除所有记忆）</span></span><br><span class="line"><span class="built_in">rm</span> -rf ~/.claude-mem</span><br><span class="line"></span><br><span class="line"><span class="comment"># 第 3 步：清理插件文件</span></span><br><span class="line"><span class="built_in">rm</span> -rf ~/.claude/plugins/marketplaces/thedotmack</span><br><span class="line"></span><br><span class="line"><span class="comment"># 第 4 步：重新安装</span></span><br><span class="line"><span class="comment"># 在 Claude Code 中执行：</span></span><br><span class="line">/plugin marketplace add thedotmack/claude-mem</span><br><span class="line">/plugin install claude-mem</span><br><span class="line"></span><br><span class="line"><span class="comment"># 第 5 步：重启 Claude Code</span></span><br><span class="line">/exit</span><br><span class="line">claude</span><br></pre></td></tr></table></figure>
+
+<hr>
+<blockquote>
+<p><strong>许可证</strong>：Claude-Mem 使用 GNU Affero General Public License v3.0 (AGPL-3.0) 开源协议。</p>
+<p>本指南基于 claude-mem v6.x 编写，功能可能随版本更新而变化，请以 <a target="_blank" rel="noopener" href="https://github.com/thedotmack/claude-mem"> 官方文档 </a> 为准。</p>
+</blockquote>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Claude-Code/" rel="tag"># Claude Code</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2026/04/01/Superpowers%E4%B8%8EOpenSpec%E5%8D%8F%E5%90%8C%E7%BC%96%E7%A0%81%E5%AE%9E%E8%B7%B5/" rel="prev" title="Superpowers 与 OpenSpec 协同编码实践">
+      <i class="fa fa-chevron-left"></i> Superpowers 与 OpenSpec 协同编码实践
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Claude-Mem-%20%E4%BB%8E%E5%85%A5%E9%97%A8%E5%88%B0%E5%AE%9E%E8%B7%B5"><span class="nav-number">1.</span> <span class="nav-text">Claude-Mem 从入门到实践</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%9B%AE%E5%BD%95"><span class="nav-number">1.1.</span> <span class="nav-text">目录</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AC%AC%201%20%E7%AB%A0%20-%20%E4%B8%BA%E4%BB%80%E4%B9%88%E9%9C%80%E8%A6%81%20-Claude-Mem"><span class="nav-number">1.2.</span> <span class="nav-text">第 1 章 为什么需要 Claude-Mem</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-%20%E4%BD%A0%E6%98%AF%E5%90%A6%E9%81%87%E5%88%B0%E8%BF%87%E8%BF%99%E4%B8%AA%E5%9C%BA%E6%99%AF%EF%BC%9F"><span class="nav-number">1.2.1.</span> <span class="nav-text">1.1 你是否遇到过这个场景？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-Claude-Mem-%20%E6%98%AF%E4%BB%80%E4%B9%88%EF%BC%9F"><span class="nav-number">1.2.2.</span> <span class="nav-text">1.2 Claude-Mem 是什么？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-3-%20%E6%A0%B8%E5%BF%83%E4%BB%B7%E5%80%BC"><span class="nav-number">1.2.3.</span> <span class="nav-text">1.3 核心价值</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AC%AC%202%20%E7%AB%A0%20-%20%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86%E9%80%9F%E8%A7%88"><span class="nav-number">1.3.</span> <span class="nav-text">第 2 章 工作原理速览</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-%20%E5%85%A8%E6%99%AF%E6%9E%B6%E6%9E%84%E5%9B%BE"><span class="nav-number">1.3.1.</span> <span class="nav-text">2.1 全景架构图</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-%20%E6%95%B0%E6%8D%AE%E6%B5%81%EF%BC%9A%E4%BB%8E%E6%8D%95%E8%8E%B7%E5%88%B0%E6%B3%A8%E5%85%A5"><span class="nav-number">1.3.2.</span> <span class="nav-text">2.2 数据流：从捕获到注入 </span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3-%20%E4%BB%80%E4%B9%88%E6%98%AF%E2%80%9D%E6%B8%90%E8%BF%9B%E5%BC%8F%E6%8A%AB%E9%9C%B2%E2%80%9D%EF%BC%9F"><span class="nav-number">1.3.3.</span> <span class="nav-text">2.3 什么是”渐进式披露”？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-4-%20%E4%BA%94%E4%B8%AA%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F%20-Hook"><span class="nav-number">1.3.4.</span> <span class="nav-text">2.4 五个生命周期 Hook</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AC%AC%203%20%E7%AB%A0%20-%20%E7%8E%AF%E5%A2%83%E5%87%86%E5%A4%87"><span class="nav-number">1.4.</span> <span class="nav-text">第 3 章 环境准备</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1-%20%E4%BB%80%E4%B9%88%E6%98%AF%20-Node-js%EF%BC%9F"><span class="nav-number">1.4.1.</span> <span class="nav-text">3.1 什么是 Node.js？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-Windows-%20%E7%8E%AF%E5%A2%83"><span class="nav-number">1.4.2.</span> <span class="nav-text">3.2 Windows 环境 </span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%AD%A5%E9%AA%A4%20-1%EF%BC%9A%E5%AE%89%E8%A3%85%20-Node-js"><span class="nav-number">1.4.2.1.</span> <span class="nav-text"> 步骤 1：安装 Node.js</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%AD%A5%E9%AA%A4%20-2%EF%BC%9A%E5%AE%89%E8%A3%85%20-Claude-Code"><span class="nav-number">1.4.2.2.</span> <span class="nav-text">步骤 2：安装 Claude Code</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%AD%A5%E9%AA%A4%20-3%EF%BC%9A%E7%99%BB%E5%BD%95%20-Claude-Code"><span class="nav-number">1.4.2.3.</span> <span class="nav-text">步骤 3：登录 Claude Code</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%AD%A5%E9%AA%A4%20-4%EF%BC%9A%E9%AA%8C%E8%AF%81%20-Claude-Code-%20%E5%8F%AF%E7%94%A8"><span class="nav-number">1.4.2.4.</span> <span class="nav-text">步骤 4：验证 Claude Code 可用</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-3-macOS-%20%E7%8E%AF%E5%A2%83"><span class="nav-number">1.4.3.</span> <span class="nav-text">3.3 macOS 环境 </span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%AD%A5%E9%AA%A4%20-1%EF%BC%9A%E5%AE%89%E8%A3%85%20-Node-js-1"><span class="nav-number">1.4.3.1.</span> <span class="nav-text"> 步骤 1：安装 Node.js</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%AD%A5%E9%AA%A4%20-2%EF%BC%9A%E5%AE%89%E8%A3%85%20-Claude-Code-1"><span class="nav-number">1.4.3.2.</span> <span class="nav-text">步骤 2：安装 Claude Code</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%AD%A5%E9%AA%A4%20-3%EF%BC%9A%E9%AA%8C%E8%AF%81"><span class="nav-number">1.4.3.3.</span> <span class="nav-text">步骤 3：验证</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-4-Linux-%20%E7%8E%AF%E5%A2%83"><span class="nav-number">1.4.4.</span> <span class="nav-text">3.4 Linux 环境 </span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%AD%A5%E9%AA%A4%20-1%EF%BC%9A%E5%AE%89%E8%A3%85%20-Node-js-2"><span class="nav-number">1.4.4.1.</span> <span class="nav-text"> 步骤 1：安装 Node.js</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%AD%A5%E9%AA%A4%20-2%EF%BC%9A%E5%AE%89%E8%A3%85%20-Claude-Code-2"><span class="nav-number">1.4.4.2.</span> <span class="nav-text">步骤 2：安装 Claude Code</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%AD%A5%E9%AA%A4%20-3%EF%BC%9A%E9%AA%8C%E8%AF%81%20-1"><span class="nav-number">1.4.4.3.</span> <span class="nav-text">步骤 3：验证</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-5-%20%E7%8E%AF%E5%A2%83%E5%87%86%E5%A4%87%E6%A3%80%E6%9F%A5%E6%B8%85%E5%8D%95"><span class="nav-number">1.4.5.</span> <span class="nav-text">3.5 环境准备检查清单 </span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AC%AC%204%20%E7%AB%A0%20-%20%E5%AE%89%E8%A3%85%20-Claude-Mem"><span class="nav-number">1.5.</span> <span class="nav-text">第 4 章 安装 Claude-Mem</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#4-1-%20%E6%96%B9%E5%BC%8F%E4%B8%80%EF%BC%9A%E6%8F%92%E4%BB%B6%E5%B8%82%E5%9C%BA%E4%B8%80%E9%94%AE%E5%AE%89%E8%A3%85%EF%BC%88%E6%8E%A8%E8%8D%90%EF%BC%89"><span class="nav-number">1.5.1.</span> <span class="nav-text">4.1 方式一：插件市场一键安装（推荐）</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%AF%A6%E7%BB%86%E6%AD%A5%E9%AA%A4"><span class="nav-number">1.5.1.1.</span> <span class="nav-text">详细步骤 </span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-2-%20%E6%96%B9%E5%BC%8F%E4%BA%8C%EF%BC%9Anpx-%20%E5%91%BD%E4%BB%A4%E5%AE%89%E8%A3%85"><span class="nav-number">1.5.2.</span> <span class="nav-text">4.2 方式二：npx 命令安装 </span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-3-%20%E9%AA%8C%E8%AF%81%E5%AE%89%E8%A3%85%E6%88%90%E5%8A%9F"><span class="nav-number">1.5.3.</span> <span class="nav-text">4.3 验证安装成功 </span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-4-%20%E4%BE%9D%E8%B5%96%E9%A1%B9%E8%AF%B4%E6%98%8E"><span class="nav-number">1.5.4.</span> <span class="nav-text">4.4 依赖项说明</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AC%AC%205%20%E7%AB%A0%20-%20%E5%9F%BA%E7%A1%80%E9%85%8D%E7%BD%AE"><span class="nav-number">1.6.</span> <span class="nav-text">第 5 章 基础配置</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#5-1-%20%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6%E4%BD%8D%E7%BD%AE"><span class="nav-number">1.6.1.</span> <span class="nav-text">5.1 配置文件位置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-2-%20%E4%B8%AD%E6%96%87%E6%A8%A1%E5%BC%8F%E8%AE%BE%E7%BD%AE"><span class="nav-number">1.6.2.</span> <span class="nav-text">5.2 中文模式设置 </span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-3-%20%E8%87%AA%E5%AE%9A%E4%B9%89%E6%95%B0%E6%8D%AE%E7%9B%AE%E5%BD%95"><span class="nav-number">1.6.3.</span> <span class="nav-text">5.3 自定义数据目录 </span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-4-Worker-%20%E6%9C%8D%E5%8A%A1%E7%AE%A1%E7%90%86"><span class="nav-number">1.6.4.</span> <span class="nav-text">5.4 Worker 服务管理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-5-%20%E9%85%8D%E7%BD%AE%E9%80%9F%E6%9F%A5"><span class="nav-number">1.6.5.</span> <span class="nav-text">5.5 配置速查</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AC%AC%206%20%E7%AB%A0%20-%20%E6%97%A5%E5%B8%B8%E4%BD%BF%E7%94%A8%E5%AE%9E%E6%88%98"><span class="nav-number">1.7.</span> <span class="nav-text">第 6 章 日常使用实战</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#6-1-%20%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5%EF%BC%9A%E5%AE%8C%E5%85%A8%E5%BD%93%E5%AE%83%E4%B8%8D%E5%AD%98%E5%9C%A8"><span class="nav-number">1.7.1.</span> <span class="nav-text">6.1 最佳实践：完全当它不存在 </span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-2-%20%E5%AE%9E%E6%88%98%E6%A1%88%E4%BE%8B%EF%BC%9A%E8%B7%A8%E4%BC%9A%E8%AF%9D%E9%A1%B9%E7%9B%AE%E5%BC%80%E5%8F%91"><span class="nav-number">1.7.2.</span> <span class="nav-text">6.2 实战案例：跨会话项目开发 </span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Day-1%EF%BC%9A%E6%90%AD%E5%BB%BA%E9%A1%B9%E7%9B%AE%E5%9F%BA%E7%A1%80"><span class="nav-number">1.7.2.1.</span> <span class="nav-text">Day 1：搭建项目基础 </span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Day-2%EF%BC%9A%E8%B7%A8%E4%BC%9A%E8%AF%9D%E6%81%A2%E5%A4%8D"><span class="nav-number">1.7.2.2.</span> <span class="nav-text">Day 2：跨会话恢复 </span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Day-3%EF%BC%9A%E4%B8%BB%E5%8A%A8%E6%90%9C%E7%B4%A2%E5%8E%86%E5%8F%B2%E8%AE%B0%E5%BF%86"><span class="nav-number">1.7.2.3.</span> <span class="nav-text">Day 3：主动搜索历史记忆</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-3-Web-Viewer%EF%BC%9A%E5%8F%AF%E8%A7%86%E5%8C%96%E6%9F%A5%E7%9C%8B%E8%AE%B0%E5%BF%86"><span class="nav-number">1.7.3.</span> <span class="nav-text">6.3 Web Viewer：可视化查看记忆</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-4-%20%E9%9A%90%E7%A7%81%E6%8E%A7%E5%88%B6"><span class="nav-number">1.7.4.</span> <span class="nav-text">6.4 隐私控制 </span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AC%AC%207%20%E7%AB%A0%20-%20%E8%BF%9B%E9%98%B6%E6%8A%80%E5%B7%A7"><span class="nav-number">1.8.</span> <span class="nav-text">第 7 章 进阶技巧</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#7-1-MCP-%20%E6%90%9C%E7%B4%A2%E5%B7%A5%E5%85%B7%EF%BC%9A%E4%B8%89%E5%B1%82%E5%B7%A5%E4%BD%9C%E6%B5%81"><span class="nav-number">1.8.1.</span> <span class="nav-text">7.1 MCP 搜索工具：三层工作流</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8%E7%A4%BA%E4%BE%8B"><span class="nav-number">1.8.1.1.</span> <span class="nav-text">使用示例 </span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%89%8B%E5%8A%A8%E4%BD%BF%E7%94%A8%E6%90%9C%E7%B4%A2%E5%B7%A5%E5%85%B7"><span class="nav-number">1.8.1.2.</span> <span class="nav-text">手动使用搜索工具 </span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%90%9C%E7%B4%A2%E5%8F%82%E6%95%B0"><span class="nav-number">1.8.1.3.</span> <span class="nav-text">搜索参数</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#7-2-%20%E7%9F%A5%E8%AF%86%E5%BA%93%EF%BC%9A%E4%BB%8E%E8%AE%B0%E5%BF%86%E5%88%B0%E7%9F%A5%E8%AF%86"><span class="nav-number">1.8.2.</span> <span class="nav-text">7.2 知识库：从记忆到知识</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%88%9B%E5%BB%BA%E7%9F%A5%E8%AF%86%E5%BA%93"><span class="nav-number">1.8.2.1.</span> <span class="nav-text">创建知识库 </span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%9F%A5%E8%AF%A2%E7%9F%A5%E8%AF%86%E5%BA%93"><span class="nav-number">1.8.2.2.</span> <span class="nav-text">查询知识库 </span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%9F%A5%E8%AF%86%E5%BA%93%E7%AE%A1%E7%90%86%E5%91%BD%E4%BB%A4"><span class="nav-number">1.8.2.3.</span> <span class="nav-text">知识库管理命令</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#7-3-%20%E6%99%BA%E8%83%BD%E4%BB%A3%E7%A0%81%E5%88%86%E6%9E%90%E5%B7%A5%E5%85%B7"><span class="nav-number">1.8.3.</span> <span class="nav-text">7.3 智能代码分析工具</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#7-4-%20%E5%AE%9E%E7%94%A8%E6%8A%80%E8%83%BD%EF%BC%88Skills%EF%BC%89"><span class="nav-number">1.8.4.</span> <span class="nav-text">7.4 实用技能（Skills）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#7-5-Beta-%20%E5%8A%9F%E8%83%BD%EF%BC%9AEndless-Mode"><span class="nav-number">1.8.5.</span> <span class="nav-text">7.5 Beta 功能：Endless Mode</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AC%AC%208%20%E7%AB%A0%20-%20%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98%E4%B8%8E%E6%8E%92%E9%94%99"><span class="nav-number">1.9.</span> <span class="nav-text">第 8 章 常见问题与排错</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#8-1-FAQ-%20%E9%80%9F%E6%9F%A5%E8%A1%A8"><span class="nav-number">1.9.1.</span> <span class="nav-text">8.1 FAQ 速查表</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#8-2-%20%E8%AF%A6%E7%BB%86%E6%8E%92%E6%9F%A5%E6%AD%A5%E9%AA%A4"><span class="nav-number">1.9.2.</span> <span class="nav-text">8.2 详细排查步骤 </span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%97%AE%E9%A2%98%EF%BC%9A%E5%AE%89%E8%A3%85%E5%90%8E%E7%9C%8B%E4%B8%8D%E5%88%B0%E4%BB%BB%E4%BD%95%E6%95%88%E6%9E%9C"><span class="nav-number">1.9.2.1.</span> <span class="nav-text"> 问题：安装后看不到任何效果 </span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%97%AE%E9%A2%98%EF%BC%9AWindows-%20%E4%B8%8A%E8%B7%AF%E5%BE%84%E7%9B%B8%E5%85%B3%E9%94%99%E8%AF%AF"><span class="nav-number">1.9.2.2.</span> <span class="nav-text">问题：Windows 上路径相关错误</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%97%AE%E9%A2%98%EF%BC%9A%E5%A6%82%E4%BD%95%E5%AE%8C%E5%85%A8%E5%8D%B8%E8%BD%BD"><span class="nav-number">1.9.2.3.</span> <span class="nav-text">问题：如何完全卸载</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#8-3-%20%E8%8E%B7%E5%8F%96%E5%B8%AE%E5%8A%A9"><span class="nav-number">1.9.3.</span> <span class="nav-text">8.3 获取帮助 </span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%99%84%E5%BD%95"><span class="nav-number">1.10.</span> <span class="nav-text">附录 </span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#A-%20%E5%91%BD%E4%BB%A4%E9%80%9F%E6%9F%A5%E8%A1%A8"><span class="nav-number">1.10.1.</span> <span class="nav-text">A. 命令速查表</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AE%89%E8%A3%85%E4%B8%8E%E7%AE%A1%E7%90%86"><span class="nav-number">1.10.1.1.</span> <span class="nav-text"> 安装与管理</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Worker-%20%E7%AE%A1%E7%90%86"><span class="nav-number">1.10.1.2.</span> <span class="nav-text">Worker 管理</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%97%A5%E5%B8%B8%E6%93%8D%E4%BD%9C"><span class="nav-number">1.10.1.3.</span> <span class="nav-text">日常操作</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#B-%20%E9%85%8D%E7%BD%AE%E9%A1%B9%E5%8F%82%E8%80%83"><span class="nav-number">1.10.2.</span> <span class="nav-text">B. 配置项参考</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#C-%20%E5%8F%82%E8%80%83%E8%B5%84%E6%BA%90"><span class="nav-number">1.10.3.</span> <span class="nav-text">C. 参考资源</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#D-%20%E5%8D%B8%E8%BD%BD%E4%B8%8E%E9%87%8D%E6%96%B0%E5%AE%89%E8%A3%85"><span class="nav-number">1.10.4.</span> <span class="nav-text">D. 卸载与重新安装 </span></a></li></ol></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">EmrysCheng</p>
+  <div class="site-description" itemprop="description">本博客主要分享后端开发相关内容</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">4</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/emryscheng" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;emryscheng" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:chengemrys@gmail.com" title="E-Mail → mailto:chengemrys@gmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2026</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">EmrysCheng</span>
+</div>
+
+<!--
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div> -->
+<div class="theme-info">
+  <div class="powered-by"></div>
+  <span class="post-count">博客全站共12k字</span>
+</div>
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>
